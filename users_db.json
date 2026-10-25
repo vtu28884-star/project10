@@ -1,0 +1,28 @@
+{
+  "9490372461": {
+    "full_name": "varun.m",
+    "phone_number": "9490372461",
+    "age": 22,
+    "gender": 1,
+    "height_cm": 175.0,
+    "weight_kg": 170.0,
+    "bmi": 55.51,
+    "password_hash": "$2b$12$WGbmKq19Db5WkGCP3ypqee7iazGnfhWGxyYdOV/21ThWqpiXlaVGK",
+    "avatar_url": "/static/avatars/9490372461_1792079374.png",
+    "created_at": "2026-10-15 21:15:40"
+  },
+  "vtu27640@veltech.edu.in": {
+    "full_name": "MANDADAPU VARUN TEJA ,CSE(2024) Vel Tech, Chennai",
+    "email": "vtu27640@veltech.edu.in",
+    "phone_number": "09490372461",
+    "age": 20,
+    "gender": 1,
+    "height_cm": 204.5,
+    "weight_kg": 100.0,
+    "bmi": 23.91,
+    "favorite_food": "",
+    "password_hash": "$2b$12$9.5fzvIrcu8Jb2nVc2XxferRI.iA5KXzw22a4v21FXxWrh7fGFoG6",
+    "avatar_url": "/static/avatars/vtu27640veltecheduin_1792769707.jpeg",
+    "created_at": "2026-10-23 21:00:24"
+  }
+}

@@ -1,0 +1,1828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Powered Health Care - Hardware & Profile</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-deep: #0c0d0f;
+      --border-stark: rgba(139,148,163,.24);
+      --border-dim: rgba(139,148,163,.12);
+      --text-main: #f0f2f5;
+      --text-dim: #9aa1ad;
+      --text-muted: #737b89;
+      --accent-amber: #c25e00;
+      --accent-alert: #ef4444;
+      --accent-green: #22c55e;
+      --font-serif: sans-serif;
+      --font-sans: sans-serif;
+      --font-mono: sans-serif;
+    }
+
+    *, *::before, *::after, input, button, select, textarea {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: sans-serif !important;
+      letter-spacing: 0.07em !important;
+      font-weight: 300 !important;
+    }
+
+    html {
+      overflow-x: hidden !important;
+      background: var(--bg-deep, #060709) !important;
+    }
+
+    html, body {
+      width: 100%;
+      min-height: 100%;
+    }
+
+    body {
+      background: var(--bg-deep);
+      color: var(--text-main);
+      font-family: sans-serif !important;
+      letter-spacing: 0.07em !important;
+      font-weight: 300 !important;
+      height: 100vh;
+      display: flex;
+      overflow: hidden;
+      isolation: isolate;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      will-change: transform, opacity;
+      /* BUTTER-SMOOTH LEFT-TO-RIGHT PAGE TRANSLATION */
+      animation: smoothSlideInFromLeft 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    body.page-transitioning-out {
+      animation: smoothSlideOutToRight 0.28s cubic-bezier(0.4, 0, 1, 1) forwards !important;
+      pointer-events: none;
+    }
+
+    @keyframes smoothSlideInFromLeft {
+      0% {
+        opacity: 0;
+        transform: translate3d(-100%, 0, 0);
+      }
+      25% {
+        opacity: 0.85;
+      }
+      100% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+      }
+    }
+
+    @keyframes smoothSlideOutToRight {
+      0% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+      }
+      100% {
+        opacity: 0;
+        transform: translate3d(60px, 0, 0);
+      }
+    }
+
+    /* FULL-SCREEN MICRO-SLATS BACKGROUND (30% GLOW) */
+    #slats-background {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+      background: radial-gradient(ellipse at 50% 40%, #150f22 0%, #060709 72%);
+    }
+
+    #slats-background canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 270px;
+      min-width: 270px;
+      height: 100vh;
+      overflow-y: auto;
+      padding: 28px 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background: rgba(12, 14, 20, 0.58);
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      border-right: 1px solid rgba(168, 85, 247, 0.2);
+      box-shadow: none !important;
+      z-index: 2;
+    }
+
+    .brand-code {
+      font-family: var(--font-mono);
+      font-size: .7rem;
+      letter-spacing: .12em;
+      color: #c084fc;
+      display: block;
+      margin-bottom: 9px;
+    }
+
+    .brand-title {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      line-height: 1.2;
+      font-weight: 300;
+    }
+
+    .brand-sub {
+      font-family: var(--font-mono);
+      font-size: .64rem;
+      color: var(--text-muted);
+      margin-top: 9px;
+      line-height: 1.7;
+    }
+
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin: 34px 0;
+    }
+
+    /* SEVILLE BUTTON & CHEVRONS-RIGHT ICON */
+    .btn.seville {
+      border-radius: 14px 2px 14px 2px !important;
+    }
+
+    .btn.small {
+      font-size: .80rem;
+    }
+
+    .icon-before.chevrons-right::before {
+      content: "";
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      margin-right: 6px;
+      background-color: currentColor;
+      -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='13 17 18 12 13 7'%3E%3C/polyline%3E%3Cpolyline points='6 17 11 12 6 7'%3E%3C/polyline%3E%3C/svg%3E");
+      mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='13 17 18 12 13 7'%3E%3C/polyline%3E%3Cpolyline points='6 17 11 12 6 7'%3E%3C/polyline%3E%3C/svg%3E");
+      -webkit-mask-size: contain;
+      mask-size: contain;
+      -webkit-mask-repeat: no-repeat;
+      mask-repeat: no-repeat;
+      -webkit-mask-position: center;
+      mask-position: center;
+      flex-shrink: 0;
+      transition: transform 0.7s ease;
+    }
+
+    .nav-btn:hover.icon-before.chevrons-right::before {
+      transform: translateX(7px);
+    }
+
+    .nav-btn {
+      background: transparent !important;
+      border: 1px solid rgba(168, 85, 247, 0.45);
+      border:0.2em solid;
+    border-radius:2em 0 2em 0;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--text-main);
+      font-family: sans-serif;
+      font-size: .82rem;
+      font-weight: 400;
+      text-decoration: none;
+      box-shadow: none !important;
+      transition: all .5s ease;
+    }
+
+    .nav-idx {
+      font-family: var(--font-mono);
+      font-size: .7rem;
+      color: #c084fc;
+    }
+
+    .nav-btn:hover,
+    .nav-btn.active {
+      background: transparent !important;
+      border-color: #c084fc;
+      color: #ffffff;
+      box-shadow: none !important;
+      text-shadow: none !important;
+    }
+
+    .nav-btn.active {
+      border-left: 3px solid #c084fc;
+      box-shadow: none !important;
+    }
+
+    .nav-btn.active .nav-idx {
+      color: #f5d0fe;
+      text-shadow: none !important;
+    }
+    .nav-btn.nav-btn-home.active,
+    .nav-btn[href="index.html"].active {
+      border-left: 3px solid #ffffff !important;
+    }
+
+    .nav-btn.nav-btn-home .nav-idx,
+    .nav-btn[href="index.html"] .nav-idx {
+      color: #ffffff !important;
+      text-shadow: none !important;
+    }
+
+    /* TOP RIGHT COMPACT SIGN OUT BUTTON */
+    .top-signout-btn {
+      background: rgba(239, 68, 68, 0.10);
+      border: 1px solid rgba(239, 68, 68, 0.42);
+       border:0.4em solid;
+    border-radius:2em 0 2em 0;
+      color: #fca5a5;
+      padding: 6px 12px;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      box-shadow: none !important;
+      white-space: nowrap;
+      text-decoration: none;
+      flex-shrink: 0;
+      line-height: 1;
+    }
+
+    .top-signout-btn:hover {
+      background: rgba(239, 68, 68, 0.28);
+      border-color: #ef4444;
+      color: #ffffff;
+      box-shadow: none !important;
+      text-shadow: none !important;
+    }
+
+    .sidebar-status {
+      padding-top: 18px;
+      border-top: 1px solid var(--border-dim);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-family: var(--font-mono);
+      font-size: .65rem;
+      color: var(--text-muted);
+    }
+
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-dim);
+      line-height: 1.5;
+    }
+
+    .indicator-dot {
+      width: 7px;
+      height: 7px;
+      flex-shrink: 0;
+      background: var(--accent-green);
+      border-radius: 50%;
+      box-shadow: none !important;
+    }
+
+    .status-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .status-row span:last-child {
+      color: var(--text-dim);
+      text-align: right;
+    }
+
+    /* VIEWPORT */
+    .viewport {
+      flex: 1;
+      min-width: 0;
+      height: 100vh;
+      overflow-y: auto;
+      padding: 34px 38px;
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+      position: relative;
+      z-index: 1;
+      background: transparent;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      border-bottom: 1px solid var(--border-stark);
+      padding-bottom: 17px;
+    }
+
+    .panel-tag {
+      font-family: var(--font-mono);
+      font-size: .68rem;
+      color: #c084fc;
+      letter-spacing: .1em;
+      display: block;
+      margin-bottom: 7px;
+    }
+
+    .panel-heading {
+      font-family: var(--font-serif);
+      font-size: clamp(1.45rem, 2.5vw, 2rem);
+      font-weight: 400;
+      line-height: 1.25;
+    }
+
+    /* TOP PROFILE BADGE (TRANSPARENT GLASS) */
+    .top-user-badge {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: transparent !important;
+      border: 1px solid rgba(255, 255, 255, 0.25) !important;
+      border-radius: 8px;
+      padding: 8px 16px 8px 10px;
+      box-shadow: none !important;
+      color: #ffffff !important;
+    }
+
+    .badge-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: #000000;
+      border: 2px solid #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-weight: 900;
+      color: #ffffff;
+      overflow: hidden;
+    }
+
+    .badge-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+
+    .badge-meta {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .badge-name {
+      font-size: .88rem;
+      font-weight: 900 !important;
+      color: #ffffff !important;
+    }
+
+    .badge-role {
+      font-family: var(--font-mono);
+      font-size: .68rem;
+      color: #d1d5db !important;
+      font-weight: 900 !important;
+      letter-spacing: .06em;
+    }
+
+    /* TRANSPARENT GLASS PROFILE CARDS WITH THICK BOLD FONT */
+    .profile-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+    }
+
+    .profile-card {
+      background: transparent !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      border: 1px solid rgba(255, 255, 255, 0.25) !important;
+       border:0.4em solid;
+    border-radius:2em 0 2em 0;
+      padding: 26px;
+      box-shadow: none !important;
+      transition: border-color 0.25s ease;
+      color: #ffffff !important;
+    }
+
+    .profile-card:hover {
+      border-color: rgba(255, 255, 255, 0.5) !important;
+      box-shadow: none !important;
+    }
+
+    .card-subtitle {
+      font-family: var(--font-serif);
+      font-size: 1.25rem;
+      font-weight: 900 !important;
+      margin-bottom: 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.25) !important;
+      padding-bottom: 10px;
+      color: #ffffff !important;
+    }
+
+    /* AVATAR UPLOAD BOX */
+    .avatar-upload-box {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 22px;
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.65) !important;
+      border: 2px solid #000000 !important;
+      background: transparent !important;
+      border: 2px solid rgba(255, 255, 255, 0.45) !important;
+      border-radius: 6px;
+    }
+
+    .avatar-upload-box small {
+      color: #000000 !important;
+      color: #d1d5db !important;
+      font-weight: 800 !important;
+    }
+
+    .dp-preview {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      border: 2px solid #000000;
+      border: 2px solid #ffffff;
+      background: #000000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 1.25rem;
+      font-weight: 900;
+      color: #ffffff;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .dp-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+
+    .upload-cta {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .file-btn {
+      background: transparent !important;
+      border: 1px solid #ffffff !important;
+       border:0.4em solid;
+    border-radius:2em 0 2em 0;
+      color: #ffffff !important;
+      padding: 8px 14px;
+      font-family: var(--font-mono);
+      font-size: .70rem;
+      font-weight: 900 !important;
+      cursor: pointer;
+      display: inline-block;
+      text-align: center;
+      transition: all 0.2s ease;
+      letter-spacing: .04em;
+      box-shadow: none !important;
+    }
+
+    .file-btn:hover {
+      background: #ffffff !important;
+      color: #000000 !important;
+      box-shadow: none !important;
+    }
+
+    #dp-input { display: none; }
+
+    /* SPECS */
+    .spec-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .spec-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: .78rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.18) !important;
+      padding-bottom: 8px;
+    }
+
+    .spec-row span {
+      color: #d1d5db !important;
+      font-weight: 900 !important;
+    }
+
+    .spec-row strong {
+      color: #ffffff !important;
+      font-weight: 900 !important;
+    }
+
+    .spec-row code {
+      color: #ffffff !important;
+      font-weight: 900 !important;
+      background: transparent !important;
+      border: 1px solid rgba(255, 255, 255, 0.35) !important;
+      padding: 2px 6px;
+      border-radius: 3px;
+    }
+
+    .btn-secondary {
+      background: transparent !important;
+      border: 1px solid #ffffff !important;
+       border:0.4em solid;
+    border-radius:2em 0 2em 0;
+      color: #ffffff !important;
+      padding: 10px 14px;
+      font-family: var(--font-mono);
+      font-size: .72rem;
+      font-weight: 900 !important;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+      transition: all 0.2s ease;
+      letter-spacing: .04em;
+      box-shadow: none !important;
+    }
+
+    .btn-secondary:hover {
+      background: #ffffff !important;
+      color: #000000 !important;
+      box-shadow: none !important;
+    }
+
+    .btn-primary-action {
+      background: transparent !important;
+      border: 1px solid #ffffff !important;
+       border:0.4em solid;
+    border-radius:2em 0 2em 0;
+      color: #ffffff !important;
+      padding: 10px 16px;
+      font-family: var(--font-mono);
+      font-size: .74rem;
+      font-weight: 900 !important;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      letter-spacing: .04em;
+      box-shadow: none !important;
+    }
+
+    .btn-primary-action:hover {
+      background: #ffffff !important;
+      color: #000000 !important;
+      box-shadow: none !important;
+    }
+
+    .btn-logout {
+      background: rgba(239, 68, 68, 0.2) !important;
+      border: 2px solid #dc2626 !important;
+       border:0.6em solid;
+    border-radius:2em 0 2em 0;
+      color: #991b1b !important;
+      color: #fca5a5 !important;
+      padding: 10px 14px;
+      font-family: var(--font-mono);
+      font-size: .72rem;
+      font-weight: 900 !important;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.2s ease;
+      letter-spacing: .04em;
+    }
+
+    .btn-logout:hover {
+      background: #dc2626 !important;
+      color: #ffffff !important;
+    }
+
+    .actions-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+      align-items: center;
+    }
+
+    /* MINI BMI PILL */
+    .bmi-calc-pill {
+      font-family: var(--font-mono);
+      font-size: .66rem;
+      padding: 3px 8px;
+      border-radius: 3px;
+      font-weight: 900 !important;
+      letter-spacing: .05em;
+      background: rgba(34, 197, 94, 0.25) !important;
+      border: 2px solid #000000 !important;
+      color: #000000 !important;
+      background: rgba(34, 197, 94, 0.2) !important;
+      border: 1.5px solid #22c55e !important;
+      color: #4ade80 !important;
+      display: inline-block;
+    }
+
+    .bmi-calc-pill.under {
+      background: rgba(56, 189, 248, 0.25) !important;
+      border-color: #000000 !important;
+      color: #000000 !important;
+      background: rgba(56, 189, 248, 0.2) !important;
+      border-color: #38bdf8 !important;
+      color: #38bdf8 !important;
+    }
+
+    .bmi-calc-pill.over {
+      background: rgba(251, 191, 36, 0.25) !important;
+      border-color: #000000 !important;
+      color: #000000 !important;
+      background: rgba(251, 191, 36, 0.2) !important;
+      border-color: #fbbf24 !important;
+      color: #fbbf24 !important;
+    }
+
+    .bmi-calc-pill.obese {
+      background: rgba(239, 68, 68, 0.25) !important;
+      border-color: #000000 !important;
+      color: #000000 !important;
+      background: rgba(239, 68, 68, 0.2) !important;
+      border-color: #f87171 !important;
+      color: #f87171 !important;
+    }
+
+    /* EDIT PROFILE MODAL */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(8, 10, 15, 0.78);
+      background: rgba(8, 10, 15, 0.82);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal-card {
+      width: 100%;
+      max-width: 640px;
+      background: rgba(255, 255, 255, 0.95) !important;
+      border: 2px solid #000000 !important;
+      background: #0f121a !important;
+      border: 2px solid rgba(255, 255, 255, 0.7) !important;
+      border-radius: 8px;
+      padding: 30px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.75);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85);
+      max-height: 90vh;
+      overflow-y: auto;
+      color: #000000 !important;
+      color: #ffffff !important;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 2px solid #000000 !important;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.4) !important;
+      padding-bottom: 14px;
+      margin-bottom: 18px;
+    }
+
+    .modal-title {
+      font-family: var(--font-serif);
+      font-size: 1.45rem;
+      font-weight: 900 !important;
+      color: #000000 !important;
+      color: #ffffff !important;
+    }
+
+    .modal-sub {
+      font-family: var(--font-mono);
+      font-size: .70rem;
+      color: #000000 !important;
+      color: #d1d5db !important;
+      font-weight: 900 !important;
+      margin-top: 4px;
+    }
+
+    .modal-close-btn {
+      background: transparent;
+      border: none;
+      color: #000000 !important;
+      color: #ffffff !important;
+      font-weight: 900 !important;
+      font-size: 1.6rem;
+      cursor: pointer;
+      line-height: 1;
+      padding: 4px 8px;
+      transition: color 0.2s;
+    }
+
+    .modal-close-btn:hover {
+      color: #ef4444 !important;
+    }
+
+    .modal-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .modal-grid .full {
+      grid-column: span 2;
+    }
+
+    .modal-input-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .modal-input-wrap label {
+      font-family: var(--font-mono);
+      font-size: .72rem;
+      color: #000000 !important;
+      color: #ffffff !important;
+      font-weight: 900 !important;
+      letter-spacing: .04em;
+    }
+
+    .modal-input-wrap input,
+    .modal-input-wrap select {
+      background: #ffffff !important;
+      border: 2px solid #000000 !important;
+      background: rgba(255, 255, 255, 0.08) !important;
+      border: 1.5px solid rgba(255, 255, 255, 0.5) !important;
+      border-radius: 4px;
+      padding: 10px 12px;
+      color: #000000 !important;
+      color: #ffffff !important;
+      font-family: var(--font-mono);
+      font-size: .88rem;
+      font-weight: 900 !important;
+      outline: none;
+    }
+
+    .modal-input-wrap input:focus,
+    .modal-input-wrap select:focus {
+      border-color: #ffffff !important;
+      box-shadow: none !important;
+    }
+
+    .modal-bmi-banner {
+      grid-column: span 2;
+      background: rgba(255, 255, 255, 0.75) !important;
+      border: 2px solid #000000 !important;
+      background: transparent !important;
+      border: 1.5px solid rgba(255, 255, 255, 0.45) !important;
+      border-radius: 4px;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 4px 0;
+    }
+
+    .modal-bmi-banner .label {
+      font-family: var(--font-mono);
+      font-size: .68rem;
+      color: #000000 !important;
+      color: #d1d5db !important;
+      font-weight: 900 !important;
+      letter-spacing: .05em;
+    }
+
+    .modal-bmi-banner .val {
+      font-family: var(--font-mono);
+      font-size: 1.4rem;
+      font-weight: 900 !important;
+      color: #000000 !important;
+      color: #ffffff !important;
+    }
+      font-size: .64rem;
+      color: var(--text-muted);
+      letter-spacing: .05em;
+    }
+
+    .modal-bmi-banner .val {
+      font-family: var(--font-mono);
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #c084fc;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-top: 20px;
+      border-top: 1px solid rgba(168, 85, 247, 0.15);
+      padding-top: 16px;
+    }
+
+    .modal-status-msg {
+      margin-top: 10px;
+      font-family: var(--font-mono);
+      font-size: .72rem;
+      text-align: right;
+    }
+
+    @media (max-width: 1000px) {
+      .sidebar {
+        width: 225px;
+        min-width: 225px;
+        padding: 23px 14px;
+      }
+      .viewport {
+        padding: 26px 22px;
+      }
+      .profile-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* MOBILE TWO-DOTS BUTTON & SLIDING SIDEBAR CONTROLS */
+    .mobile-dots-btn {
+      position: fixed;
+      top: 14px;
+      left: 14px;
+      width: 36px;
+      height: 36px;
+      background: rgba(18, 20, 29, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 8px;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      cursor: pointer;
+      z-index: 10002;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+      transition: all 0.25s ease;
+      padding: 0;
+    }
+
+    .mobile-dots-btn .dot {
+      width: 5.5px;
+      height: 5.5px;
+      border-radius: 50%;
+      background: #ffffff;
+      display: block;
+      box-shadow: 0 0 6px rgba(255, 255, 255, 0.7);
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .mobile-dots-btn:hover, .mobile-dots-btn:active {
+      background: rgba(168, 85, 247, 0.25);
+      border-color: #c084fc;
+    }
+
+    .mobile-dots-btn.active .dot {
+      background: #c084fc;
+      box-shadow: 0 0 8px #c084fc;
+    }
+
+    .sidebar-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 9998;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+
+    .sidebar-backdrop.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .sidebar-close-btn {
+      display: none;
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 30px;
+      height: 30px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 6px;
+      color: #ffffff;
+      font-size: 0.85rem;
+      font-weight: 700;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .sidebar-close-btn:hover {
+      background: rgba(239, 68, 68, 0.2);
+      border-color: #ef4444;
+      color: #fca5a5;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        height: 100vh;
+      }
+
+      .mobile-dots-btn {
+        display: flex !important;
+      }
+
+      .sidebar-backdrop {
+        display: block !important;
+      }
+
+      .sidebar-close-btn {
+        display: flex !important;
+      }
+
+      .sidebar {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        bottom: 0 !important;
+        height: 100vh !important;
+        width: 280px !important;
+        min-width: 280px !important;
+        max-width: 82vw !important;
+        background: rgba(10, 12, 17, 0.96) !important;
+        backdrop-filter: blur(18px) !important;
+        -webkit-backdrop-filter: blur(18px) !important;
+        border-right: 1.5px solid rgba(255, 255, 255, 0.18) !important;
+        box-shadow: 12px 0 35px rgba(0, 0, 0, 0.85) !important;
+        z-index: 10000 !important;
+        transform: translate3d(-100%, 0, 0) !important;
+        transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        display: flex !important;
+        flex-direction: column !important;
+        padding: 24px 18px !important;
+        overflow-y: auto !important;
+      }
+
+      .sidebar.mobile-open {
+        transform: translate3d(0, 0, 0) !important;
+      }
+
+      .brand-code,
+      .brand-title,
+      .brand-sub,
+      .nav-text,
+      .sidebar-status {
+        display: block !important;
+      }
+
+      .sidebar-brand {
+        height: auto !important;
+        margin-top: 10px;
+      }
+
+      .sidebar-nav {
+        width: 100% !important;
+        margin: 24px 0 !important;
+      }
+
+      .nav-btn {
+        justify-content: flex-start !important;
+        padding: 12px 14px !important;
+      }
+
+      .viewport {
+        width: 100vw !important;
+        max-width: 100vw !important;
+        padding: 22px 14px !important;
+        padding-top: 58px !important;
+        gap: 18px;
+      }
+
+      .panel-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 14px;
+      }
+
+      .top-user-badge {
+        width: 100%;
+      }
+    }
+
+    /* SITE FOOTER */
+    .site-footer {
+      margin-top: 40px;
+      padding: 24px 16px 16px 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.18);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      text-align: center;
+      background: transparent !important;
+      flex-shrink: 0;
+      width: 100%;
+    }
+
+    .footer-title {
+      font-size: 0.72rem;
+      font-weight: 700 !important;
+      letter-spacing: 0.07em !important;
+      color: #f1f5f9;
+      text-transform: uppercase;
+      line-height: 1.5;
+      max-width: 900px;
+    }
+
+    .footer-links {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .footer-link {
+      font-size: 0.70rem;
+      font-weight: 700 !important;
+      letter-spacing: 0.07em !important;
+      color: #c084fc;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .footer-link:hover {
+      color: #ffffff;
+      text-decoration: underline;
+    }
+
+    .footer-divider {
+      color: rgba(255, 255, 255, 0.35);
+      font-size: 0.70rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Full-Screen Micro-Slats Background -->
+  <div id="slats-background" aria-hidden="true">
+    <canvas id="slats-canvas"></canvas>
+  </div>
+
+  <!-- Mobile Two-Dots Menu Button -->
+  <button type="button" class="mobile-dots-btn" id="mobile-sidebar-toggle" onclick="toggleMobileSidebar()" title="Toggle Side Navigation" aria-label="Toggle Side Navigation">
+    <span class="dot"></span>
+    <span class="dot"></span>
+  </button>
+
+  <!-- Mobile Sidebar Backdrop Overlay -->
+  <div class="sidebar-backdrop" id="sidebar-backdrop" onclick="closeMobileSidebar()" aria-hidden="true"></div>
+
+  <aside class="sidebar">
+    <button type="button" class="sidebar-close-btn" onclick="closeMobileSidebar()" aria-label="Close Side Navigation" title="Close Side Navigation">✕</button>
+    <div>
+      <div class="sidebar-brand">
+        <span class="brand-code">HEALTH INTELLIGENCE / 05</span>
+        <h1 class="brand-title">AI Powered<br>Health Care</h1>
+        <p class="brand-sub">PHYSIOLOGICAL MONITORING SYSTEM</p>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="index.html" class="nav-btn nav-btn-home btn seville small icon-before chevrons-right"><span class="nav-text">Home</span></a>
+        <a href="triage.html" class="nav-btn btn seville small icon-before chevrons-right"><span class="nav-text">Diagnostic Analysis</span></a>
+        <a href="personal.html" class="nav-btn btn seville small icon-before chevrons-right"><span class="nav-text">Personal Health Info</span></a>
+        <a href="https://vasuki-2-0.vercel.app" class="nav-btn btn seville small icon-before chevrons-right"><span class="nav-text">Clinical Queries</span></a>
+        <a href="profile.html" class="nav-btn btn seville small icon-before chevrons-right active"><span class="nav-text">Hardware &amp; Profile</span></a>
+      </nav>
+    </div>
+
+    <div class="sidebar-status">
+      <div class="status-indicator">
+        <span class="indicator-dot"></span>
+        <span>BCRYPT AUTH ACTIVE</span>
+      </div>
+      <div class="status-row">
+        <span>SECURITY</span><span>12 SALT ROUNDS</span>
+      </div>
+      <div class="status-row">
+        <span>STORAGE</span><span id="sidebar-db-status">SQLITE / FALLBACK</span>
+      </div>
+    </div>
+  </aside>
+
+  <main class="viewport">
+    <header class="panel-header">
+      <div>
+        <span class="panel-tag">SECTION 05 // SYSTEM PROFILE</span>
+        <h2 class="panel-heading">Clinical Account &amp; Manifest</h2>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <div class="top-user-badge">
+          <div class="badge-avatar" id="top-badge-avatar">
+            <span id="badge-initials">VT</span>
+            <img id="badge-img" alt="User DP" />
+          </div>
+          <div class="badge-meta">
+            <span class="badge-name" id="top-badge-name">M Varun Teja</span>
+            <span class="badge-role">SUBJECT // ENROLLED</span>
+          </div>
+        </div>
+        <button type="button" onclick="logoutSession()" class="top-signout-btn" title="Sign Out">
+          <span>⏻</span> Sign Out
+        </button>
+      </div>
+    </header>
+
+    <div class="profile-layout">
+      <div class="profile-card">
+        <h3 class="card-subtitle">Enrolled Subject Credentials</h3>
+
+        <div class="avatar-upload-box">
+          <div class="dp-preview" id="preview-avatar">
+            <span id="preview-initials">VT</span>
+            <img id="preview-img" alt="DP Preview" />
+          </div>
+          <div class="upload-cta">
+            <label for="dp-input" class="file-btn">UPLOAD NEW (DP)</label>
+            <input type="file" id="dp-input" accept="image/*" onchange="uploadDP(event)" />
+            <small style="font-family: sans-serif; font-size: 0.65rem; color: var(--text-muted);">
+              Max 4MB.
+            </small>
+          </div>
+        </div>
+
+        <div class="spec-list">
+          <div class="spec-row"><span>FULL NAME</span><strong id="prof-name">--</strong></div>
+          <div class="spec-row"><span>EMAIL ADDRESS [MAIL]</span><strong id="prof-email">--</strong></div>
+          <div class="spec-row"><span>PHONE NUMBER</span><strong id="prof-phone">--</strong></div>
+          <div class="spec-row"><span>CHRONOLOGICAL AGE</span><strong id="prof-age">--</strong></div>
+          <div class="spec-row"><span>BIOLOGICAL SEX</span><strong id="prof-gender">--</strong></div>
+          <div class="spec-row"><span>STATURE &amp; MASS</span><strong id="prof-stature">--</strong></div>
+          <div class="spec-row">
+            <span>CALCULATED BMI</span>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <strong id="prof-bmi">--</strong>
+              <span class="bmi-calc-pill" id="prof-bmi-pill">NORMAL RANGE</span>
+            </div>
+          </div>
+          <div class="spec-row"><span>FAVORITE FOOD</span><strong id="prof-food">--</strong></div>
+        </div>
+
+        <div class="actions-group">
+          <button type="button" class="btn-primary-action" onclick="openEditModal()">✎ EDIT PROFILE DETAILS</button>
+          <button type="button" class="btn-logout" onclick="logoutSession()">LOG OUT</button>
+          <a href="register.html" class="btn-secondary">SWITCH / RE-ENROLL</a>
+        </div>
+      </div>
+
+      <div class="profile-card">
+        <h3 class="card-subtitle">WBAN Physical Node Specification</h3>
+        <div class="spec-list">
+          <div class="spec-row"><span>DATABASE GATEWAY</span><strong id="prof-db-status">SQLITE (LOCAL FALLBACK)</strong></div>
+          <div class="spec-row"><span>MICROCONTROLLER</span><strong>ESP32-WROOM-32D (240MHz)</strong></div>
+          <div class="spec-row"><span>PULSE OXIMETER</span><strong>Maxim MAX30102 (I2C: 0x57)</strong></div>
+          <div class="spec-row"><span>TEMPERATURE</span><strong>Maxim DS18B20 (GPIO 4)</strong></div>
+          <div class="spec-row"><span>ACCELEROMETER</span><strong>MPU6050 6-DOF (I2C: 0x68)</strong></div>
+          <div class="spec-row"><span>WIRELESS PROTOCOL</span><strong>802.11 b/g/n Wi-Fi + BLE 4.2</strong></div>
+          <div class="spec-row"><span>POWER SPECIFICATION</span><strong>3.7V LiPo (850mAh) + TP4056</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SITE FOOTER -->
+    <footer class="site-footer">
+      <div class="footer-title">
+        AI POWERD HEALTH CARE SYSTEM DEVELOPED BY TOONY NIRMAL &amp; TEAM SUPERVISED BY DR.SARVANAN
+      </div>
+      <div class="footer-links">
+        <a href="privacy.html" class="footer-link">Privacy Policy</a>
+        <span class="footer-divider">•</span>
+        <a href="terms.html" class="footer-link">Terms and Conditions</a>
+      </div>
+    </footer>
+  </main>
+
+  <!-- EDIT PROFILE MODAL -->
+  <div class="modal-overlay" id="edit-modal" onclick="handleModalBackdropClick(event)">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title">Edit Clinical Profile Details</h3>
+          <p class="modal-sub">Modify biometric parameters &amp; credentials. BMI auto-recalculates instantly.</p>
+        </div>
+        <button type="button" class="modal-close-btn" onclick="closeEditModal()">&times;</button>
+      </div>
+
+      <form id="edit-form" onsubmit="submitEditProfile(event)">
+        <div class="modal-grid">
+          <div class="modal-input-wrap full">
+            <label>Full Name</label>
+            <input type="text" id="edit-name" required />
+          </div>
+
+          <div class="modal-input-wrap">
+            <label>Email Address [Mail]</label>
+            <input type="email" id="edit-email" required />
+          </div>
+
+          <div class="modal-input-wrap">
+            <label>Phone Number (Optional)</label>
+            <input type="tel" id="edit-phone" placeholder="e.g. 9840123456" />
+          </div>
+
+          <div class="modal-input-wrap">
+            <label>Chronological Age</label>
+            <input type="number" id="edit-age" min="1" max="120" required />
+          </div>
+
+          <div class="modal-input-wrap">
+            <label>Biological Sex</label>
+            <select id="edit-gender">
+              <option value="1">Male (1)</option>
+              <option value="0">Female (0)</option>
+            </select>
+          </div>
+
+          <div class="modal-input-wrap">
+            <label>Height (cm)</label>
+            <input type="number" id="edit-height" step="0.5" min="50" max="250" oninput="calcModalBMI()" required />
+          </div>
+
+          <div class="modal-input-wrap">
+            <label>Weight (kg)</label>
+            <input type="number" id="edit-weight" step="0.5" min="10" max="300" oninput="calcModalBMI()" required />
+          </div>
+
+          <!-- Dynamic Live BMI Recalculation inside Edit Modal -->
+          <div class="modal-bmi-banner">
+            <div>
+              <div class="label">LIVE RECALCULATED BMI</div>
+              <div class="val" id="modal-bmi-val">22.86 kg/m²</div>
+            </div>
+            <span class="bmi-calc-pill" id="modal-bmi-pill">NORMAL RANGE</span>
+          </div>
+
+          <div class="modal-input-wrap full">
+            <label>Favorite Food (Optional)</label>
+            <input type="text" id="edit-food" placeholder="e.g. Tender coconut, Bananas, Lentils" />
+          </div>
+
+          <div class="modal-input-wrap full">
+            <label>New Password (Optional, leave blank to keep unchanged)</label>
+            <input type="password" id="edit-password" minlength="4" placeholder="Enter new password to update bcrypt hash" />
+          </div>
+        </div>
+
+        <div class="modal-status-msg" id="modal-status-msg"></div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" onclick="closeEditModal()">CANCEL</button>
+          <button type="submit" class="btn-primary-action" id="modal-save-btn">SAVE PROFILE CHANGES</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    /* =========================================================
+       ANIMATED MICRO-SLATS BACKGROUND (Autonomous - No Cursor Interaction)
+       ========================================================= */
+    (() => {
+      const canvas = document.getElementById('slats-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      let width = 0;
+      let height = 0;
+      let dpr = 1;
+      let animationId = 0;
+      let time = 0;
+      let lastFrame = 0;
+
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const slatWidth = 9;
+      const slatHeight = 23;
+      const gap = 4;
+      const spacingX = slatWidth + gap;
+      const spacingY = slatHeight + gap;
+
+      function resize() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+
+        canvas.width = Math.round(width * dpr);
+        canvas.height = Math.round(height * dpr);
+        canvas.style.width = width + 'px';
+        canvas.style.height = height + 'px';
+
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+
+      function roundedRect(x, y, w, h, radius) {
+        ctx.beginPath();
+        ctx.roundRect(x, y, w, h, radius);
+      }
+
+      function draw(now) {
+        if (document.hidden) {
+          animationId = 0;
+          return;
+        }
+
+        if (!reducedMotion && now - lastFrame < 33) {
+          animationId = requestAnimationFrame(draw);
+          return;
+        }
+
+        lastFrame = now;
+        time = reducedMotion ? 0 : now * 0.00035;
+
+        ctx.clearRect(0, 0, width, height);
+
+        const columns = Math.ceil(width / spacingX) + 2;
+        const rows = Math.ceil(height / spacingY) + 2;
+        const startX = (width % spacingX) / 2;
+        const startY = (height % spacingY) / 2;
+
+        for (let row = 0; row < rows; row++) {
+          for (let col = 0; col < columns; col++) {
+            const x = col * spacingX + startX;
+            const y = row * spacingY + startY;
+
+            const waveA = Math.sin(x * 0.008 + time * 2.2);
+            const waveB = Math.cos(y * 0.012 - time * 1.6);
+            const waveC = Math.sin((x + y) * 0.004 + time);
+
+            const level = (waveA + waveB + waveC + 3) / 6;
+            const centerX = x + slatWidth / 2;
+            const centerY = y + slatHeight / 2;
+
+            const heightScale = 0.35 + level * 0.65;
+            const renderedHeight = slatHeight * heightScale;
+            const tilt = Math.sin(x * 0.003 + y * 0.005 + time) * 0.10;
+            const alpha = Math.min(0.30, 0.06 + level * 0.24);
+
+            ctx.save();
+            ctx.translate(centerX, centerY);
+            ctx.rotate(tilt);
+
+            const gradient = ctx.createLinearGradient(
+              -slatWidth / 2, -renderedHeight / 2,
+              slatWidth / 2, renderedHeight / 2
+            );
+
+            gradient.addColorStop(0, `rgba(88, 28, 135, ${alpha})`);
+            gradient.addColorStop(0.55, `rgba(147, 51, 234, ${alpha * 0.85})`);
+            gradient.addColorStop(1, `rgba(192, 132, 252, ${alpha * 0.65})`);
+
+            roundedRect(
+              -slatWidth / 2,
+              -renderedHeight / 2,
+              slatWidth,
+              renderedHeight,
+              3
+            );
+
+            ctx.fillStyle = gradient;
+            ctx.fill();
+
+            if (level > 0.78) {
+              ctx.strokeStyle = `rgba(216, 180, 254, ${alpha * 0.35})`;
+              ctx.lineWidth = 0.6;
+              ctx.stroke();
+            }
+
+            ctx.restore();
+          }
+        }
+
+        animationId = requestAnimationFrame(draw);
+      }
+
+      window.addEventListener('resize', resize, { passive: true });
+
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden && animationId === 0) {
+          lastFrame = 0;
+          animationId = requestAnimationFrame(draw);
+        }
+      });
+
+      resize();
+      animationId = requestAnimationFrame(draw);
+    })();
+
+    /* =========================================================
+       USER PROFILE & AUTH LOGIC
+       ========================================================= */
+    function checkAuth() {
+      const stored = localStorage.getItem("wban_user");
+      const loggedIn = localStorage.getItem("wban_logged_in") === "true";
+      if (!stored) {
+        window.location.href = "register.html";
+        return false;
+      }
+      if (!loggedIn) {
+        window.location.href = "register.html?mode=login";
+        return false;
+      }
+      return true;
+    }
+
+    function getBmiClassification(bmi) {
+      if (bmi < 18.5) {
+        return { text: "UNDERWEIGHT (< 18.5)", class: "bmi-calc-pill under" };
+      } else if (bmi <= 24.9) {
+        return { text: "NORMAL RANGE (18.5 - 24.9)", class: "bmi-calc-pill" };
+      } else if (bmi <= 29.9) {
+        return { text: "OVERWEIGHT (25.0 - 29.9)", class: "bmi-calc-pill over" };
+      } else {
+        return { text: "OBESE CLASS (≥ 30.0)", class: "bmi-calc-pill obese" };
+      }
+    }
+
+    function loadProfile() {
+      if (!checkAuth()) return;
+
+      const user = JSON.parse(localStorage.getItem("wban_user") || "{}");
+
+      document.getElementById('prof-name').textContent = user.full_name || "--";
+      document.getElementById('prof-email').textContent = user.email || "(Not registered)";
+      document.getElementById('prof-phone').textContent = user.phone_number || "(Optional / Unset)";
+      document.getElementById('prof-age').textContent = (user.age || "--") + " yrs";
+      document.getElementById('prof-gender').textContent = user.gender === 1 ? "Male" : "Female";
+      document.getElementById('prof-stature').textContent = `${user.height_cm || "--"} cm / ${user.weight_kg || "--"} kg`;
+
+      const bmi = parseFloat(user.bmi || 22.86);
+      document.getElementById('prof-bmi').textContent = `${bmi.toFixed(2)} kg/m²`;
+      const bmiBadge = document.getElementById('prof-bmi-pill');
+      const cls = getBmiClassification(bmi);
+      bmiBadge.textContent = cls.text;
+      bmiBadge.className = cls.class;
+
+      document.getElementById('prof-food').textContent = user.favorite_food && user.favorite_food.trim() 
+        ? user.favorite_food 
+        : "None specified";
+
+      document.getElementById('top-badge-name').textContent = user.full_name || "Enrolled Subject";
+      const initials = (user.full_name || "VT").split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+      document.getElementById('badge-initials').textContent = initials;
+      document.getElementById('preview-initials').textContent = initials;
+
+      if (user.avatar_url) {
+        displayAvatar(user.avatar_url);
+      }
+
+      fetchDatabaseStatus();
+    }
+
+    async function fetchDatabaseStatus() {
+      try {
+        const res = await fetch("/api/db_status");
+        if (res.ok) {
+          const data = await res.json();
+          const dbInfo = (data && data.database) ? data.database : {};
+          const isPg = dbInfo.backend === "postgresql";
+          const sidebarEl = document.getElementById("sidebar-db-status");
+          const specEl = document.getElementById("prof-db-status");
+          if (sidebarEl) {
+            sidebarEl.textContent = isPg ? "POSTGRESQL / CLOUD" : "SQLITE / FALLBACK";
+            sidebarEl.style.color = isPg ? "#4ade80" : "#c084fc";
+          }
+          if (specEl) {
+            specEl.textContent = isPg ? "PostgreSQL (Production Active)" : "SQLite (Local Fallback: health_gateway.db)";
+            specEl.style.color = isPg ? "#4ade80" : "#ffffff";
+          }
+        }
+      } catch (err) {
+        console.warn("DB status check offline (running client-side mode)");
+      }
+    }
+
+    function displayAvatar(url) {
+      const badgeImg = document.getElementById('badge-img');
+      const badgeInitials = document.getElementById('badge-initials');
+      const prevImg = document.getElementById('preview-img');
+      const prevInitials = document.getElementById('preview-initials');
+
+      badgeImg.src = url;
+      badgeImg.style.display = 'block';
+      badgeInitials.style.display = 'none';
+
+      prevImg.src = url;
+      prevImg.style.display = 'block';
+      prevInitials.style.display = 'none';
+    }
+
+    function logoutSession() {
+      localStorage.setItem("wban_logged_in", "false");
+      sessionStorage.removeItem("wban_logged_in");
+      window.location.href = "register.html?mode=login";
+    }
+
+    /* =========================================================
+       EDIT PROFILE MODAL & LIVE BMI RECALCULATION
+       ========================================================= */
+    function openEditModal() {
+      const user = JSON.parse(localStorage.getItem("wban_user") || "{}");
+      document.getElementById('edit-name').value = user.full_name || "";
+      document.getElementById('edit-email').value = user.email || "";
+      document.getElementById('edit-phone').value = user.phone_number || "";
+      document.getElementById('edit-age').value = user.age || 22;
+      document.getElementById('edit-gender').value = user.gender !== undefined ? user.gender : 1;
+      document.getElementById('edit-height').value = user.height_cm || 175;
+      document.getElementById('edit-weight').value = user.weight_kg || 70;
+      document.getElementById('edit-food').value = user.favorite_food || "";
+      document.getElementById('edit-password').value = "";
+      document.getElementById('modal-status-msg').textContent = "";
+
+      calcModalBMI();
+      document.getElementById('edit-modal').classList.add('open');
+    }
+
+    function closeEditModal() {
+      document.getElementById('edit-modal').classList.remove('open');
+    }
+
+    function handleModalBackdropClick(e) {
+      if (e.target.id === 'edit-modal') {
+        closeEditModal();
+      }
+    }
+
+    function calcModalBMI() {
+      const h = parseFloat(document.getElementById('edit-height').value);
+      const w = parseFloat(document.getElementById('edit-weight').value);
+      const valEl = document.getElementById('modal-bmi-val');
+      const pillEl = document.getElementById('modal-bmi-pill');
+
+      if (!h || !w || h <= 0 || w <= 0) {
+        valEl.textContent = "-- kg/m²";
+        pillEl.textContent = "INVALID";
+        return 0;
+      }
+
+      const h_m = h / 100.0;
+      const bmi = parseFloat((w / (h_m * h_m)).toFixed(2));
+      valEl.textContent = `${bmi.toFixed(2)} kg/m²`;
+
+      const cls = getBmiClassification(bmi);
+      pillEl.textContent = cls.text;
+      pillEl.className = cls.class;
+      return bmi;
+    }
+
+    async function submitEditProfile(e) {
+      e.preventDefault();
+      const currentUser = JSON.parse(localStorage.getItem("wban_user") || "{}");
+      const saveBtn = document.getElementById('modal-save-btn');
+      const statusMsg = document.getElementById('modal-status-msg');
+
+      const heightVal = parseFloat(document.getElementById('edit-height').value);
+      const weightVal = parseFloat(document.getElementById('edit-weight').value);
+      const newBmi = calcModalBMI();
+
+      const payload = {
+        identifier: currentUser.email || currentUser.phone_number || currentUser.full_name,
+        full_name: document.getElementById('edit-name').value.trim(),
+        email: document.getElementById('edit-email').value.trim(),
+        phone_number: document.getElementById('edit-phone').value.trim(),
+        age: parseInt(document.getElementById('edit-age').value),
+        gender: parseInt(document.getElementById('edit-gender').value),
+        height_cm: heightVal,
+        weight_kg: weightVal,
+        favorite_food: document.getElementById('edit-food').value.trim()
+      };
+
+      const newPassword = document.getElementById('edit-password').value;
+      if (newPassword && newPassword.length >= 4) {
+        payload.new_password = newPassword;
+      }
+
+      saveBtn.disabled = true;
+      saveBtn.textContent = "SAVING & RE-HASHING...";
+      statusMsg.style.color = "#c084fc";
+      statusMsg.textContent = "Recalculating BMI and updating security hash...";
+
+      try {
+        const res = await fetch("http://127.0.0.1:8000/api/update_profile", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          localStorage.setItem("wban_user", JSON.stringify(data.user));
+          localStorage.setItem("wban_demo", JSON.stringify({
+            age: data.user.age,
+            gender: data.user.gender,
+            height: data.user.height_cm,
+            weight: data.user.weight_kg,
+            bmi: data.user.bmi
+          }));
+
+          statusMsg.style.color = "var(--accent-green)";
+          statusMsg.textContent = "✓ Profile & BMI updated successfully!";
+
+          setTimeout(() => {
+            saveBtn.disabled = false;
+            saveBtn.textContent = "SAVE PROFILE CHANGES";
+            closeEditModal();
+            loadProfile();
+          }, 800);
+        } else {
+          statusMsg.style.color = "var(--accent-alert)";
+          statusMsg.textContent = data.detail || "Update failed.";
+          saveBtn.disabled = false;
+          saveBtn.textContent = "SAVE PROFILE CHANGES";
+        }
+      } catch (err) {
+        console.warn("[!] Server offline; persisting profile changes locally.", err);
+        const updatedLocal = {
+          ...currentUser,
+          full_name: payload.full_name,
+          email: payload.email,
+          phone_number: payload.phone_number,
+          age: payload.age,
+          gender: payload.gender,
+          height_cm: payload.height_cm,
+          weight_kg: payload.weight_kg,
+          bmi: newBmi,
+          favorite_food: payload.favorite_food
+        };
+
+        localStorage.setItem("wban_user", JSON.stringify(updatedLocal));
+        localStorage.setItem("wban_demo", JSON.stringify({
+          age: updatedLocal.age,
+          gender: updatedLocal.gender,
+          height: updatedLocal.height_cm,
+          weight: updatedLocal.weight_kg,
+          bmi: updatedLocal.bmi
+        }));
+
+        statusMsg.style.color = "var(--accent-green)";
+        statusMsg.textContent = "✓ Updated locally (Offline mode).";
+
+        setTimeout(() => {
+          saveBtn.disabled = false;
+          saveBtn.textContent = "SAVE PROFILE CHANGES";
+          closeEditModal();
+          loadProfile();
+        }, 800);
+      }
+    }
+
+    async function uploadDP(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const user = JSON.parse(localStorage.getItem("wban_user") || "{}");
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const localDataUrl = e.target.result;
+        displayAvatar(localDataUrl);
+        user.avatar_url = localDataUrl;
+        localStorage.setItem("wban_user", JSON.stringify(user));
+      };
+      reader.readAsDataURL(file);
+
+      const formData = new FormData();
+      formData.append("identifier", user.email || user.phone_number || "patient");
+      formData.append("email", user.email || "");
+      formData.append("phone_number", user.phone_number || "");
+      formData.append("file", file);
+
+      try {
+        const res = await fetch("http://127.0.0.1:8000/api/upload_avatar", {
+          method: "POST",
+          body: formData
+        });
+        if (res.ok) {
+          const data = await res.json();
+          user.avatar_url = data.avatar_url;
+          localStorage.setItem("wban_user", JSON.stringify(user));
+        }
+      } catch (err) {
+        console.warn("[!] Uploaded locally (server unreachable):", err);
+      }
+    }
+
+    loadProfile();
+
+    /* --- Mobile Sidebar Two-Dots Menu Controller --- */
+    function toggleMobileSidebar() {
+      const sidebar = document.querySelector('.sidebar');
+      const backdrop = document.getElementById('sidebar-backdrop');
+      const toggleBtn = document.getElementById('mobile-sidebar-toggle');
+      if (!sidebar) return;
+      const isOpen = sidebar.classList.toggle('mobile-open');
+      if (backdrop) backdrop.classList.toggle('active', isOpen);
+      if (toggleBtn) toggleBtn.classList.toggle('active', isOpen);
+    }
+
+    function closeMobileSidebar() {
+      const sidebar = document.querySelector('.sidebar');
+      const backdrop = document.getElementById('sidebar-backdrop');
+      const toggleBtn = document.getElementById('mobile-sidebar-toggle');
+      if (sidebar) sidebar.classList.remove('mobile-open');
+      if (backdrop) backdrop.classList.remove('active');
+      if (toggleBtn) toggleBtn.classList.remove('active');
+    }
+
+    document.querySelectorAll('.sidebar-nav a').forEach(navLink => {
+      navLink.addEventListener('click', () => {
+        closeMobileSidebar();
+      });
+    });
+
+    /* --- Slow Left-to-Right Page Transition Handler --- */
+    document.querySelectorAll('a[href]').forEach(link => {
+      const href = link.getAttribute('href');
+      if (!href) return;
+      if (
+        href.startsWith('http://') ||
+        href.startsWith('https://') ||
+        href.startsWith('//') ||
+        href.startsWith('#') ||
+        href.startsWith('javascript:') ||
+        href.startsWith('mailto:') ||
+        link.target === '_blank'
+      ) return;
+
+      link.addEventListener('click', e => {
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+        const currentFile = window.location.pathname.split('/').pop() || 'profile.html';
+        if (href === currentFile) return;
+
+        e.preventDefault();
+        document.body.classList.add('page-transitioning-out');
+        setTimeout(() => {
+          window.location.href = href;
+        }, 260);
+      });
+    });
+
+    window.addEventListener('pageshow', () => {
+      document.body.classList.remove('page-transitioning-out');
+    });
+  </script>
+</body>
+</html>

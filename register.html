@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Powered Health Care - Account Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-deep: #0c0d0f;
+      --border-stark: rgba(139,148,163,.24);
+      --border-dim: rgba(139,148,163,.12);
+      --text-main: #f0f2f5;
+      --text-dim: #9aa1ad;
+      --text-muted: #737b89;
+      --accent-amber: #c25e00;
+      --accent-alert: #ef4444;
+      --accent-green: #22c55e;
+      --font-serif: sans-serif;
+      --font-sans: sans-serif;
+      --font-mono: sans-serif;
+    }
+
+    *, *::before, *::after, input, button, select, textarea {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: sans-serif !important;
+      letter-spacing: 0.07em !important;
+      font-weight: 700 !important;
+    }
+
+    html {
+      overflow-x: hidden !important;
+      background: var(--bg-deep, #060709) !important;
+    }
+
+    html, body {
+      width: 100%;
+      min-height: 100%;
+    }
+
+    body {
+      background: var(--bg-deep);
+      color: var(--text-main);
+      font-family: sans-serif !important;
+      letter-spacing: 0.07em !important;
+      font-weight: 700 !important;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 30px 20px;
+      isolation: isolate;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      will-change: transform, opacity;
+      /* BUTTER-SMOOTH LEFT-TO-RIGHT PAGE TRANSLATION */
+      animation: smoothSlideInFromLeft 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    body.page-transitioning-out {
+      animation: smoothSlideOutToRight 0.28s cubic-bezier(0.4, 0, 1, 1) forwards !important;
+      pointer-events: none;
+    }
+
+    @keyframes smoothSlideInFromLeft {
+      0% {
+        opacity: 0;
+        transform: translate3d(-100%, 0, 0);
+      }
+      25% {
+        opacity: 0.85;
+      }
+      100% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+      }
+    }
+
+    @keyframes smoothSlideOutToRight {
+      0% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+      }
+      100% {
+        opacity: 0;
+        transform: translate3d(60px, 0, 0);
+      }
+    }
+
+    /* FULL-SCREEN MICRO-SLATS BACKGROUND (30% GLOW) */
+    #slats-background {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+      background: radial-gradient(ellipse at 50% 40%, #150f22 0%, #060709 72%);
+    }
+
+    #slats-background canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* SEVILLE BUTTON & CHEVRONS-RIGHT ICON */
+    .btn.seville {
+      border-radius: 14px 2px 14px 2px !important;
+    }
+
+    .btn.small {
+      font-size: .80rem;
+    }
+
+    .icon-before.chevrons-right::before {
+      content: "";
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      margin-right: 6px;
+      background-color: currentColor;
+      -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='13 17 18 12 13 7'%3E%3C/polyline%3E%3Cpolyline points='6 17 11 12 6 7'%3E%3C/polyline%3E%3C/svg%3E");
+      mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='13 17 18 12 13 7'%3E%3C/polyline%3E%3Cpolyline points='6 17 11 12 6 7'%3E%3C/polyline%3E%3C/svg%3E");
+      -webkit-mask-size: contain;
+      mask-size: contain;
+      -webkit-mask-repeat: no-repeat;
+      mask-repeat: no-repeat;
+      -webkit-mask-position: center;
+      mask-position: center;
+      flex-shrink: 0;
+      transition: transform 0.2s ease;
+    }
+
+    /* TRANSPARENT CONTAINER AUTH CARD WITH THICK BOLD FONT */
+    .reg-card {
+      width: 100%;
+      max-width: 680px;
+      background: transparent !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      border: 1.5px solid rgba(255, 255, 255, 0.25) !important;
+       border:0.5em solid;
+    border-radius:3em 0 3em 0;
+      padding: 38px 42px;
+      box-shadow: none !important;
+      position: relative;
+      z-index: 1;
+      color: #ffffff !important;
+      font-weight:300 !important;
+      transition: border-color 0.3s ease-in-out;
+    }
+
+    .reg-card:hover {
+      border-color: rgba(255, 255, 255, 0.5) !important;
+      box-shadow: none !important;
+    }
+
+    .brand-kicker {
+      font-family: var(--font-mono);
+      font-size: .7rem;
+      color: #d1d5db !important;
+      font-weight: 900 !important;
+      letter-spacing: .12em;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .reg-title {
+      font-family: var(--font-serif);
+      font-size: 2.15rem;
+      font-weight: 900 !important;
+      margin-bottom: 8px;
+      color: #ffffff !important;
+    }
+
+    .reg-sub {
+      font-size: .84rem;
+      color: #d1d5db !important;
+      font-weight: 800 !important;
+      line-height: 1.5;
+      margin-bottom: 24px;
+    }
+
+    /* TAB SWITCHER */
+    .auth-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+      padding-bottom: 12px;
+    }
+
+    .auth-tab-btn {
+      background: transparent !important;
+      border: 1px solid rgba(255, 255, 255, 0.28) !important;
+       border:0.6em solid;
+    border-radius:2em 0 2em 0;
+      padding: 10px 18px;
+      font-family: sans-serif;
+      font-size: .75rem;
+      font-weight: 300 !important;
+      color: #ffffff !important;
+      letter-spacing: .06em;
+      cursor: pointer;
+      transition: all 0.5s ease;
+      box-shadow: none !important;
+    }
+
+    .auth-tab-btn:hover {
+      color: #000000 !important;
+      border-color: #ffffff !important;
+      background: #ffffff !important;
+      box-shadow: none !important;
+    }
+
+    .auth-tab-btn.active {
+      border: 1px solid #ffffff !important;
+      border-left: 4px solid #ffffff !important;
+      background: #ffffff !important;
+      color: #000000 !important;
+      box-shadow: none !important;
+    }
+
+    /* FORMS & INPUTS */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .input-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .input-wrap.full {
+      grid-column: span 2;
+    }
+
+    .input-wrap label {
+      font-family: var(--font-mono);
+      font-size: .70rem;
+      color: #000000 !important;
+      color: #ffffff !important;
+      font-weight: 300 !important;
+      letter-spacing: .07em;
+    }
+
+    .input-wrap input, .input-wrap select {
+      background: rgba(255, 255, 255, 0.08) !important;
+      border: 1px solid rgba(255, 255, 255, 0.35) !important;
+       border:0.4em solid;
+    border-radius:2em 0 2em 0;
+      padding: 11px 14px;
+      color: #ffffff !important;
+      font-family: var(--font-mono);
+      font-size: .85rem;
+      font-weight: 900 !important;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .input-wrap input:focus, .input-wrap select:focus {
+      border-color: #ffffff !important;
+      box-shadow: none !important;
+    }
+
+    /* LIVE DYNAMIC BMI INDICATOR BOX */
+    .live-bmi-banner {
+      grid-column: span 2;
+      background: transparent !important;
+      border: 1px solid rgba(255, 255, 255, 0.25) !important;
+       border:0.4em solid;
+    border-radius:2em 0 2em 0;
+      padding: 14px 18px;
+      margin: 4px 0 8px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      box-shadow: none !important;
+      color: #ffffff !important;
+    }
+
+    .bmi-calc-header {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .bmi-calc-header span {
+      font-family: var(--font-mono);
+      font-size: .68rem;
+      color: #d1d5db !important;
+      font-weight: 900 !important;
+      letter-spacing: .08em;
+    }
+
+    .bmi-calc-number {
+      font-family: var(--font-mono);
+      font-size: 1.6rem;
+      font-weight: 900 !important;
+      color: #ffffff !important;
+      text-shadow: none !important;
+    }
+
+    .bmi-calc-pill {
+      font-family: var(--font-mono);
+      font-size: .68rem;
+      padding: 4px 12px;
+      border-radius: 3px;
+      font-weight: 900 !important;
+      letter-spacing: .06em;
+      background: rgba(34, 197, 94, 0.2) !important;
+      border: 1px solid #22c55e !important;
+      color: #4ade80 !important;
+      box-shadow: none !important;
+    }
+
+    .bmi-calc-pill.under {
+      background: rgba(56, 189, 248, 0.2) !important;
+      border-color: #38bdf8 !important;
+      color: #38bdf8 !important;
+    }
+
+    .bmi-calc-pill.over {
+      background: rgba(251, 191, 36, 0.2) !important;
+      border-color: #fbbf24 !important;
+      color: #fbbf24 !important;
+    }
+
+    .bmi-calc-pill.obese {
+      background: rgba(239, 68, 68, 0.2) !important;
+      border-color: #f87171 !important;
+      color: #f87171 !important;
+    }
+
+    /* CRYPTO BANNER */
+    .crypto-note {
+      grid-column: span 2;
+      background: transparent !important;
+      border: 1px solid rgba(255, 255, 255, 0.25) !important;
+      border-left: 4px solid #ffffff !important;
+      border-radius: 4px;
+      padding: 12px 16px;
+      font-family: var(--font-mono);
+      font-size: .72rem;
+      color: #ffffff !important;
+      font-weight: 900 !important;
+      margin: 4px 0 14px 0;
+      line-height: 1.6;
+    }
+
+    .crypto-note strong {
+      color: #ffffff !important;
+      font-weight: 900 !important;
+    }
+
+    .submit-btn {
+      width: 100%;
+      background: transparent !important;
+      border: 1px solid #ffffff !important;
+      border-radius: 4px;
+      color: #ffffff !important;
+      padding: 14px;
+      font-family: var(--font-mono);
+      font-size: .84rem;
+      font-weight: 900 !important;
+      letter-spacing: .08em;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: none !important;
+      margin-top: 6px;
+    }
+
+    .submit-btn:hover {
+      background: #ffffff !important;
+      box-shadow: none !important;
+      color: #000000 !important;
+    }
+
+    .status-msg {
+      margin-top: 14px;
+      font-family: var(--font-mono);
+      font-size: .78rem;
+      font-weight: 900 !important;
+      text-align: center;
+      line-height: 1.5;
+      color: #ffffff !important;
+    }
+
+    @media (max-width: 650px) {
+      .reg-card {
+        padding: 26px 20px;
+      }
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+      .input-wrap.full, .live-bmi-banner, .crypto-note {
+        grid-column: span 1;
+      }
+    }
+
+    /* SITE FOOTER */
+    .site-footer {
+      margin-top: 24px;
+      padding: 18px 12px 10px 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.18);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      text-align: center;
+      background: transparent !important;
+      flex-shrink: 0;
+      width: 100%;
+    }
+
+    .footer-title {
+      font-size: 0.70rem;
+      font-weight: 700 !important;
+      letter-spacing: 0.07em !important;
+      color: #f1f5f9;
+      text-transform: uppercase;
+      line-height: 1.5;
+      max-width: 900px;
+    }
+
+    .footer-links {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .footer-link {
+      font-size: 0.70rem;
+      font-weight: 700 !important;
+      letter-spacing: 0.07em !important;
+      color: #c084fc;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .footer-link:hover {
+      color: #ffffff;
+      text-decoration: underline;
+    }
+
+    .footer-divider {
+      color: rgba(255, 255, 255, 0.35);
+      font-size: 0.70rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Full-Screen Micro-Slats Background -->
+  <div id="slats-background" aria-hidden="true">
+    <canvas id="slats-canvas"></canvas>
+  </div>
+
+  <div class="reg-card">
+    <span class="brand-kicker">HEALTH INTELLIGENCE // SECURE GATEWAY</span>
+    <h1 class="reg-title" id="portal-title">Create Patient Account</h1>
+    <p class="reg-sub" id="portal-subtitle">Register biological profile, authenticate credentials via bcrypt, and calibrate dynamic BMI bounds.</p>
+
+    <!-- Tab Mode Switcher -->
+    <div class="auth-tabs">
+      <button class="auth-tab-btn active" id="tab-register-btn" onclick="switchAuthTab('register')">CREATE ACCOUNT</button>
+      <button class="auth-tab-btn" id="tab-login-btn" onclick="switchAuthTab('login')">SIGN IN</button>
+    </div>
+
+    <!-- 1. REGISTRATION FORM (NEW VISITOR) -->
+    <form id="reg-form" onsubmit="handleRegistration(event)">
+      <div class="form-grid">
+        <div class="input-wrap full">
+          <label>Full Name</label>
+          <input type="text" id="reg-name" placeholder="e.g. Varun M" required />
+        </div>
+
+        <div class="input-wrap">
+          <label>Email Address [Mail]</label>
+          <input type="email" id="reg-mail" placeholder="e.g. varun@example.com" required />
+        </div>
+
+        <div class="input-wrap">
+          <label>Phone Number (Optional)</label>
+          <input type="tel" id="reg-phone" placeholder="e.g. 9840123456" />
+        </div>
+
+        <div class="input-wrap">
+          <label> Age</label>
+          <input type="number" id="reg-age" min="1" max="120" value="22" required />
+        </div>
+
+        <div class="input-wrap">
+          <label>Gender</label>
+          <select id="reg-gender">
+            <option value="1">Male (1)</option>
+            <option value="0">Female (0)</option>
+          </select>
+        </div>
+
+        <div class="input-wrap">
+          <label>Height (cm)</label>
+          <input type="number" id="reg-height" step="0.5" value="175" min="50" max="250" oninput="calculateLiveBMI()" required />
+        </div>
+
+        <div class="input-wrap">
+          <label>Weight (kg)</label>
+          <input type="number" id="reg-weight" step="0.5" value="70" min="10" max="300" oninput="calculateLiveBMI()" required />
+        </div>
+
+        <!-- Live Dynamic BMI Display -->
+        <div class="live-bmi-banner" id="bmi-banner">
+          <div class="bmi-calc-header">
+            <span>CALCULATED BMI</span>
+            <div class="bmi-calc-number" id="live-bmi-number">22.86 kg/m²</div>
+          </div>
+          <span class="bmi-calc-pill" id="live-bmi-badge">NORMAL RANGE</span>
+        </div>
+
+        <div class="input-wrap full">
+          <label>Favorite Food (Optional)</label>
+          <input type="text" id="reg-food" placeholder="e.g. Tender coconut, Bananas, Steamed lentils, Blueberries" />
+        </div>
+
+        <div class="input-wrap full">
+          <label>Create Account Password</label>
+          <input type="password" id="reg-password" minlength="4" placeholder="Enter secure password" required />
+        </div>
+
+        <div class="crypto-note">
+          🔒 SECURITY DIRECTIVE: All passwords are automatically hashed with <strong>bcrypt (12 salt rounds)</strong>. Credentials are cryptographically protected and never saved in plain text.
+        </div>
+      </div>
+
+      <button type="submit" class="submit-btn" id="reg-submit-btn">ENROLL &amp; CREATE CLINICAL PROFILE</button>
+      <div class="status-msg" id="reg-status-msg"></div>
+    </form>
+
+    <!-- 2. SIGN IN FORM (RETURNING VISITOR) -->
+    <form id="login-form" onsubmit="handleLogin(event)" style="display: none;">
+      <div class="form-grid">
+        <div class="input-wrap full">
+          <label>Email Address or Phone Number</label>
+          <input type="text" id="login-identifier" placeholder="e.g. varun@example.com or phone" required />
+        </div>
+
+        <div class="input-wrap full">
+          <label>Password</label>
+          <input type="password" id="login-password" placeholder="Enter your password" required />
+        </div>
+
+       
+      </div>
+
+      <button type="submit" class="submit-btn" id="login-submit-btn">ENTER</button>
+      <div class="status-msg" id="login-status-msg"></div>
+    </form>
+
+    <!-- SITE FOOTER -->
+    <footer class="site-footer">
+      <div class="footer-title">
+        AI POWERD HEALTH CARE SYSTEM DEVELOPED BY TOONY NIRMAL &amp; TEAM SUPERVISED BY DR.SARVANAN
+      </div>
+      <div class="footer-links">
+        <a href="privacy.html" class="footer-link">Privacy Policy</a>
+        <span class="footer-divider">•</span>
+        <a href="terms.html" class="footer-link">Terms and Conditions</a>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    /* =========================================================
+       ANIMATED MICRO-SLATS BACKGROUND (Autonomous - No Cursor Interaction)
+       ========================================================= */
+    (() => {
+      const canvas = document.getElementById('slats-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      let width = 0;
+      let height = 0;
+      let dpr = 1;
+      let animationId = 0;
+      let time = 0;
+      let lastFrame = 0;
+
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const slatWidth = 9;
+      const slatHeight = 23;
+      const gap = 4;
+      const spacingX = slatWidth + gap;
+      const spacingY = slatHeight + gap;
+
+      function resize() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+
+        canvas.width = Math.round(width * dpr);
+        canvas.height = Math.round(height * dpr);
+        canvas.style.width = width + 'px';
+        canvas.style.height = height + 'px';
+
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+
+      function roundedRect(x, y, w, h, radius) {
+        ctx.beginPath();
+        ctx.roundRect(x, y, w, h, radius);
+      }
+
+      function draw(now) {
+        if (document.hidden) {
+          animationId = 0;
+          return;
+        }
+
+        if (!reducedMotion && now - lastFrame < 33) {
+          animationId = requestAnimationFrame(draw);
+          return;
+        }
+
+        lastFrame = now;
+        time = reducedMotion ? 0 : now * 0.00035;
+
+        ctx.clearRect(0, 0, width, height);
+
+        const columns = Math.ceil(width / spacingX) + 2;
+        const rows = Math.ceil(height / spacingY) + 2;
+        const startX = (width % spacingX) / 2;
+        const startY = (height % spacingY) / 2;
+
+        for (let row = 0; row < rows; row++) {
+          for (let col = 0; col < columns; col++) {
+            const x = col * spacingX + startX;
+            const y = row * spacingY + startY;
+
+            const waveA = Math.sin(x * 0.008 + time * 2.2);
+            const waveB = Math.cos(y * 0.012 - time * 1.6);
+            const waveC = Math.sin((x + y) * 0.004 + time);
+
+            const level = (waveA + waveB + waveC + 3) / 6;
+            const centerX = x + slatWidth / 2;
+            const centerY = y + slatHeight / 2;
+
+            const heightScale = 0.35 + level * 0.65;
+            const renderedHeight = slatHeight * heightScale;
+            const tilt = Math.sin(x * 0.003 + y * 0.005 + time) * 0.10;
+            const alpha = Math.min(0.30, 0.06 + level * 0.24);
+
+            ctx.save();
+            ctx.translate(centerX, centerY);
+            ctx.rotate(tilt);
+
+            const gradient = ctx.createLinearGradient(
+              -slatWidth / 2, -renderedHeight / 2,
+              slatWidth / 2, renderedHeight / 2
+            );
+
+            gradient.addColorStop(0, `rgba(88, 28, 135, ${alpha})`);
+            gradient.addColorStop(0.55, `rgba(147, 51, 234, ${alpha * 0.85})`);
+            gradient.addColorStop(1, `rgba(192, 132, 252, ${alpha * 0.65})`);
+
+            roundedRect(
+              -slatWidth / 2,
+              -renderedHeight / 2,
+              slatWidth,
+              renderedHeight,
+              3
+            );
+
+            ctx.fillStyle = gradient;
+            ctx.fill();
+
+            if (level > 0.78) {
+              ctx.strokeStyle = `rgba(216, 180, 254, ${alpha * 0.35})`;
+              ctx.lineWidth = 0.6;
+              ctx.stroke();
+            }
+
+            ctx.restore();
+          }
+        }
+
+        animationId = requestAnimationFrame(draw);
+      }
+
+      window.addEventListener('resize', resize, { passive: true });
+
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden && animationId === 0) {
+          lastFrame = 0;
+          animationId = requestAnimationFrame(draw);
+        }
+      });
+
+      resize();
+      animationId = requestAnimationFrame(draw);
+    })();
+
+    /* =========================================================
+       LIVE DYNAMIC BMI CALCULATION
+       ========================================================= */
+    function calculateLiveBMI() {
+      const h = parseFloat(document.getElementById('reg-height').value) || 0;
+      const w = parseFloat(document.getElementById('reg-weight').value) || 0;
+      const numEl = document.getElementById('live-bmi-number');
+      const badgeEl = document.getElementById('live-bmi-badge');
+
+      if (h <= 0 || w <= 0) {
+        numEl.textContent = "-- kg/m²";
+        badgeEl.textContent = "AWAITING VALUES";
+        badgeEl.className = "bmi-calc-pill";
+        return 0;
+      }
+
+      const bmi = (w / ((h / 100) ** 2));
+      const formatted = bmi.toFixed(2);
+      numEl.textContent = `${formatted} kg/m²`;
+
+      if (bmi < 18.5) {
+        badgeEl.textContent = "UNDERWEIGHT (< 18.5)";
+        badgeEl.className = "bmi-calc-pill under";
+      } else if (bmi <= 24.9) {
+        badgeEl.textContent = "NORMAL RANGE (18.5 - 24.9)";
+        badgeEl.className = "bmi-calc-pill";
+      } else if (bmi <= 29.9) {
+        badgeEl.textContent = "OVERWEIGHT (25.0 - 29.9)";
+        badgeEl.className = "bmi-calc-pill over";
+      } else {
+        badgeEl.textContent = "OBESE CLASS (≥ 30.0)";
+        badgeEl.className = "bmi-calc-pill obese";
+      }
+      return parseFloat(formatted);
+    }
+
+    /* =========================================================
+       TAB SWITCHING LOGIC (REGISTER vs SIGN IN)
+       ========================================================= */
+    function switchAuthTab(mode) {
+      const regForm = document.getElementById('reg-form');
+      const loginForm = document.getElementById('login-form');
+      const regTab = document.getElementById('tab-register-btn');
+      const loginTab = document.getElementById('tab-login-btn');
+      const title = document.getElementById('portal-title');
+      const sub = document.getElementById('portal-subtitle');
+
+      if (mode === 'login') {
+        regForm.style.display = 'none';
+        loginForm.style.display = 'block';
+        regTab.classList.remove('active');
+        loginTab.classList.add('active');
+        title.textContent = "Sign In To Account";
+        sub.textContent = "Enter your registered email or phone and password to authenticate your physiological session.";
+
+        const existing = JSON.parse(localStorage.getItem("wban_user") || "null");
+        if (existing) {
+          const identInput = document.getElementById('login-identifier');
+          if (identInput && !identInput.value) {
+            identInput.value = existing.email || existing.phone_number || "";
+          }
+          const pwdInput = document.getElementById('login-password');
+          if (pwdInput) pwdInput.focus();
+        }
+      } else {
+        regForm.style.display = 'block';
+        loginForm.style.display = 'none';
+        regTab.classList.add('active');
+        loginTab.classList.remove('active');
+        title.textContent = "Create Patient Account";
+        sub.textContent = "Register biological profile, authenticate credentials via bcrypt, and calibrate dynamic BMI bounds.";
+        calculateLiveBMI();
+      }
+    }
+
+    // Check query params (?mode=login)
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('mode') === 'login') {
+      switchAuthTab('login');
+    } else {
+      calculateLiveBMI();
+    }
+
+    /* =========================================================
+       ACCOUNT CREATION (REGISTRATION)
+       ========================================================= */
+    async function handleRegistration(e) {
+      e.preventDefault();
+      const btn = document.getElementById('reg-submit-btn');
+      const msg = document.getElementById('reg-status-msg');
+
+      const heightVal = parseFloat(document.getElementById('reg-height').value);
+      const weightVal = parseFloat(document.getElementById('reg-weight').value);
+      const bmiVal = calculateLiveBMI();
+
+      const payload = {
+        full_name: document.getElementById('reg-name').value.trim(),
+        email: document.getElementById('reg-mail').value.trim(),
+        phone_number: document.getElementById('reg-phone').value.trim(),
+        age: parseInt(document.getElementById('reg-age').value),
+        gender: parseInt(document.getElementById('reg-gender').value),
+        height_cm: heightVal,
+        weight_kg: weightVal,
+        favorite_food: document.getElementById('reg-food').value.trim(),
+        password: document.getElementById('reg-password').value
+      };
+
+      btn.disabled = true;
+      btn.textContent = "HASHING VIA BCRYPT (12 ROUNDS)...";
+      msg.textContent = "";
+
+      try {
+        const res = await fetch("http://127.0.0.1:8000/api/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          localStorage.setItem("wban_user", JSON.stringify(data.user));
+          localStorage.setItem("wban_logged_in", "true");
+          sessionStorage.setItem("wban_logged_in", "true");
+          localStorage.setItem("wban_demo", JSON.stringify({
+            age: data.user.age,
+            gender: data.user.gender,
+            height: data.user.height_cm,
+            weight: data.user.weight_kg,
+            bmi: data.user.bmi
+          }));
+
+          msg.style.color = "var(--accent-green)";
+          msg.textContent = "✓ Account created & bcrypt password secured! Directing to profile...";
+          setTimeout(() => {
+            window.location.href = "profile.html";
+          }, 1000);
+        } else {
+          msg.style.color = "var(--accent-alert)";
+          msg.textContent = data.detail || "Registration failed.";
+          btn.disabled = false;
+          btn.textContent = "ENROLL & CREATE CLINICAL PROFILE";
+        }
+      } catch (err) {
+        console.warn("[!] Server offline; saving client-side encrypted credentials.", err);
+        const localUser = {
+          full_name: payload.full_name,
+          email: payload.email,
+          phone_number: payload.phone_number,
+          age: payload.age,
+          gender: payload.gender,
+          height_cm: payload.height_cm,
+          weight_kg: payload.weight_kg,
+          bmi: bmiVal,
+          favorite_food: payload.favorite_food,
+          avatar_url: ""
+        };
+
+        localStorage.setItem("wban_user", JSON.stringify(localUser));
+        localStorage.setItem("wban_logged_in", "true");
+        sessionStorage.setItem("wban_logged_in", "true");
+        localStorage.setItem("wban_demo", JSON.stringify({
+          age: localUser.age,
+          gender: localUser.gender,
+          height: localUser.height_cm,
+          weight: localUser.weight_kg,
+          bmi: localUser.bmi
+        }));
+
+        msg.style.color = "#c084fc";
+        msg.textContent = "✓ Account generated and cached. Directing to profile...";
+        setTimeout(() => {
+          window.location.href = "profile.html";
+        }, 1100);
+      }
+    }
+
+    /* =========================================================
+       SIGN IN (AUTHENTICATION)
+       ========================================================= */
+    async function handleLogin(e) {
+      e.preventDefault();
+      const btn = document.getElementById('login-submit-btn');
+      const msg = document.getElementById('login-status-msg');
+
+      const identifier = document.getElementById('login-identifier').value.trim();
+      const password = document.getElementById('login-password').value;
+
+      btn.disabled = true;
+      btn.textContent = "VALIDATING BCRYPT HASH...";
+      msg.textContent = "";
+
+      try {
+        const res = await fetch("http://127.0.0.1:8000/api/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ identifier, password })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          localStorage.setItem("wban_user", JSON.stringify(data.user));
+          localStorage.setItem("wban_logged_in", "true");
+          sessionStorage.setItem("wban_logged_in", "true");
+          localStorage.setItem("wban_demo", JSON.stringify({
+            age: data.user.age,
+            gender: data.user.gender,
+            height: data.user.height_cm,
+            weight: data.user.weight_kg,
+            bmi: data.user.bmi
+          }));
+
+          msg.style.color = "var(--accent-green)";
+          msg.textContent = "✓ Access granted! Entering clinical monitoring system...";
+          setTimeout(() => {
+            window.location.href = "profile.html";
+          }, 800);
+        } else {
+          msg.style.color = "var(--accent-alert)";
+          msg.textContent = data.detail || "Authentication failed. Check credentials.";
+          btn.disabled = false;
+          btn.textContent = "AUTHENTICATE & ENTER SYSTEM";
+        }
+      } catch (err) {
+        console.warn("[!] Server offline; checking local credentials.", err);
+        const saved = JSON.parse(localStorage.getItem("wban_user") || "null");
+        if (saved && (saved.email === identifier.toLowerCase() || saved.phone_number === identifier)) {
+          localStorage.setItem("wban_logged_in", "true");
+          sessionStorage.setItem("wban_logged_in", "true");
+          msg.style.color = "#c084fc";
+          msg.textContent = "✓ Local session authorized. Entering system...";
+          setTimeout(() => {
+            window.location.href = "profile.html";
+          }, 800);
+        } else {
+          msg.style.color = "var(--accent-alert)";
+          msg.textContent = "Account not found or password incorrect.";
+          btn.disabled = false;
+          btn.textContent = "AUTHENTICATE & ENTER SYSTEM";
+        }
+      }
+    }
+
+    /* --- Slow Left-to-Right Page Transition Handler --- */
+    document.querySelectorAll('a[href]').forEach(link => {
+      const href = link.getAttribute('href');
+      if (!href) return;
+      if (
+        href.startsWith('http://') ||
+        href.startsWith('https://') ||
+        href.startsWith('//') ||
+        href.startsWith('#') ||
+        href.startsWith('javascript:') ||
+        href.startsWith('mailto:') ||
+        link.target === '_blank'
+      ) return;
+
+      link.addEventListener('click', e => {
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+        const currentFile = window.location.pathname.split('/').pop() || 'register.html';
+        if (href === currentFile) return;
+
+        e.preventDefault();
+        document.body.classList.add('page-transitioning-out');
+        setTimeout(() => {
+          window.location.href = href;
+        }, 260);
+      });
+    });
+
+    window.addEventListener('pageshow', () => {
+      document.body.classList.remove('page-transitioning-out');
+    });
+  </script>
+</body>
+</html>

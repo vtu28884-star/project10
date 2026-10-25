@@ -1,0 +1,3297 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Powered Health Care System</title>
+<script>
+  (function() {
+    const user = localStorage.getItem("wban_user");
+    const loggedIn = localStorage.getItem("wban_logged_in") === "true";
+    if (!user) {
+      window.location.replace("register.html");
+    } else if (!loggedIn) {
+      window.location.replace("register.html?mode=login");
+    }
+  })();
+  function logoutSession() {
+    localStorage.setItem("wban_logged_in", "false");
+    sessionStorage.removeItem("wban_logged_in");
+    window.location.replace("register.html?mode=login");
+  }
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg-deep: #0c0d0f;
+  --bg-surface: rgba(20,22,25,.88);
+  --bg-elevated: rgba(26,29,34,.88);
+  --bg-subtle: #22262c;
+  --border-stark: rgba(139,148,163,.24);
+  --border-dim: rgba(139,148,163,.12);
+  --text-main: #f0f2f5;
+  --text-dim: #9aa1ad;
+  --text-muted: #737b89;
+  --accent-amber: #c25e00;
+  --accent-alert: #ef4444;
+  --accent-green: #22c55e;
+  --font-serif: sans-serif;
+  --font-sans: sans-serif;
+  --font-mono: sans-serif;
+}
+
+*, *::before, *::after, input, button, select, textarea {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif !important;
+  letter-spacing: 0.07em !important;
+  font-weight: 700 !important;
+}
+
+html {
+  overflow-x: hidden !important;
+  background: var(--bg-deep, #060709) !important;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100%;
+}
+
+body {
+  background: var(--bg-deep);
+  color: var(--text-main);
+  font-family: sans-serif !important;
+  letter-spacing: 0.08em !important;
+  font-weight: 700 !important;
+  height: 100vh;
+  display: flex;
+  overflow: hidden;
+  isolation: isolate;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+  /* BUTTER-SMOOTH LEFT-TO-RIGHT PAGE TRANSLATION */
+  animation: smoothSlideInFromLeft 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+body.page-transitioning-out {
+  animation: smoothSlideOutToRight 0.28s cubic-bezier(0.4, 0, 1, 1) forwards !important;
+  pointer-events: none;
+}
+
+@keyframes smoothSlideInFromLeft {
+  0% {
+    opacity: 0;
+    transform: translate3d(-100%, 0, 0);
+  }
+  25% {
+    opacity: 0.85;
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes smoothSlideOutToRight {
+  0% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(60px, 0, 0);
+  }
+}
+
+/* ANIMATED FULL-SCREEN MICRO-SLATS BACKGROUND (30% GLOW) */
+
+#slats-background {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 40%, #150f22 0%, #060709 72%);
+}
+
+#slats-background canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* SIDEBAR */
+
+.sidebar {
+  width: 270px;
+  min-width: 270px;
+  height: 100vh;
+  overflow-y: auto;
+  padding: 28px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: rgba(10, 12, 16, 0.7);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: none !important;
+  z-index: 2;
+}
+
+.brand-code {
+  font-family: sans-serif;
+  font-size: .7rem;
+  letter-spacing: .12em;
+  color: #c084fc;
+  display: block;
+  margin-bottom: 9px;
+}
+
+.brand-title {
+  font-family: sans-serif;
+  font-size: 1.5rem;
+  line-height: 1.2;
+  font-weight: 400;
+}
+
+.brand-sub {
+  font-family: sans-serif;
+  font-size: .64rem;
+  color: var(--text-muted);
+  margin-top: 9px;
+  line-height: 1.7;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 34px 0;
+}
+
+/* SEVILLE BUTTON & CHEVRONS-RIGHT ICON */
+.btn.seville {
+  border-radius: 14px 2px 14px 2px !important;
+  border:0.4em solid;
+    border-radius:2em 0 2em 0;
+}
+
+.btn.small {
+  font-size: .80rem;
+}
+
+.icon-before.chevrons-right::before {
+  content: "";
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  margin-right: 6px;
+  background-color: currentColor;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='13 17 18 12 13 7'%3E%3C/polyline%3E%3Cpolyline points='6 17 11 12 6 7'%3E%3C/polyline%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='13 17 18 12 13 7'%3E%3C/polyline%3E%3Cpolyline points='6 17 11 12 6 7'%3E%3C/polyline%3E%3C/svg%3E");
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.nav-btn:hover.icon-before.chevrons-right::before {
+  transform: translateX(3px);
+}
+
+.nav-btn {
+  background: transparent !important;
+  border: 1px solid rgba(168, 85, 247, 0.35);
+  border:0.2em solid;
+    border-radius:2em 0 2em 0;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-main);
+  font-family: sans-serif;
+  font-size: .82rem;
+  font-weight: 400;
+  text-decoration: none;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  transition: all .5s ease;
+}
+
+.nav-idx {
+  font-family: var(--font-mono);
+  font-size: .7rem;
+  color: #c084fc;
+}
+
+.nav-btn:hover{
+
+  background: #c084fc;
+  border-color: #c38afd;
+  color: #f2edf8;
+  box-shadow: none !important;
+  text-shadow: none !important;
+
+
+
+
+}
+
+
+
+.nav-btn.nav-btn-home.active,
+.nav-btn[href="index.html"].active {
+  border-left: 3px solid #ffffff !important;
+}
+
+.nav-btn.nav-btn-home .nav-idx,
+.nav-btn[href="index.html"] .nav-idx {
+  color: #ffffff !important;
+  text-shadow: none !important;
+}
+
+/* TOP RIGHT COMPACT SIGN OUT BUTTON (NO GLOW) */
+.top-signout-btn {
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  border:0.7em solid;
+    border-radius:2em 0 2em 0;
+  color: #fca5a5;
+  padding: 6px 12px;
+  font-family: sans-serif;
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.3s ease;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  white-space: nowrap;
+  text-decoration: none;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.top-signout-btn:hover {
+  background: rgba(239, 68, 68, 0.28);
+  border-color: #ef4444;
+  color: #ffffff;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+.sidebar-status {
+  padding-top: 18px;
+  border-top: 1px solid var(--border-dim);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-family: sans-serif;
+  font-size: .65rem;
+  color: var(--text-muted);
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+
+.indicator-dot {
+  width: 7px;
+  height: 7px;
+  flex-shrink: 0;
+  background: var(--accent-green);
+  border-radius: 50%;
+  box-shadow: none !important;
+}
+
+.indicator-dot.offline {
+  background: var(--accent-alert);
+  box-shadow: none !important;
+}
+
+.status-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.status-row span:last-child {
+  color: var(--text-dim);
+  text-align: right;
+}
+
+/* MAIN DASHBOARD */
+
+.viewport {
+  flex: 1;
+  min-width: 0;
+  height: 100vh;
+  overflow-y: auto;
+  padding: 34px 38px;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  position: relative;
+  z-index: 1;
+  background: transparent;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 20px;
+  border-bottom: 1px solid var(--border-stark);
+  padding-bottom: 17px;
+}
+
+.panel-tag {
+  font-family: sans-serif;
+  font-size: .68rem;
+  color: #c084fc;
+  letter-spacing: .2em;
+  display: block;
+  margin-bottom: 7px;
+}
+
+.panel-heading {
+  font-family: sans-serif;
+  font-size: clamp(1.45rem, 2.5vw, 2rem);
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+.source-control {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-family: sans-serif;
+  font-size: .67rem;
+  color: var(--text-dim);
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+}
+
+.source-control input {
+  accent-color: #a855f7;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+/* TRANSPARENT CONTAINER BOXES WITH THICK BOLD FONT */
+
+.glass-box {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  border-radius: 8px;
+  position: relative;
+  box-shadow: none !important;
+  transition: border-color 0.25s ease, transform 0.15s ease-out;
+  transform-style: preserve-3d;
+  will-change: transform;
+  color: #ffffff !important;
+}
+
+.glass-box:hover {
+  border-color: rgba(255, 255, 255, 0.45) !important;
+  box-shadow: none !important;
+}
+
+/* Force bright bold font - very thick (900/800) for all text inside containers */
+.glass-box h2,
+.glass-box h3,
+.glass-box h4,
+.glass-box p,
+.glass-box span:not(.severity-pill):not(.pulse-beacon),
+.glass-box strong,
+.glass-box label,
+.glass-box small,
+.glass-box input,
+.glass-box button {
+  color: #bafcb4 !important;
+  font-weight: 300 !important;
+}
+
+/* METRIC CARDS */
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.metric-card {
+  min-width: 0;
+  min-height: 185px;
+  padding: 19px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  user-select: none;
+}
+
+.metric-top,
+.metric-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  z-index: 2;
+}
+
+.metric-label {
+  font-family: var(--font-mono);
+  font-size: .68rem;
+  color: #ffffff !important;
+  font-weight: 900 !important;
+  line-height: 1.6;
+  display: flex;
+  align-items: center;
+}
+
+.pulse-beacon {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ef4444;
+  box-shadow: none !important;
+  animation: cardiac-pulse 0.81s infinite ease-in-out;
+  margin-right: 7px;
+  flex-shrink: 0;
+}
+
+@keyframes cardiac-pulse {
+  0% { transform: scale(0.85); opacity: 0.65; }
+  50% { transform: scale(1.3); opacity: 1; }
+  100% { transform: scale(0.85); opacity: 0.65; }
+}
+
+.metric-status {
+  font-family: var(--font-mono);
+  font-size: .62rem;
+  font-weight: 900 !important;
+  background: transparent !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.5) !important;
+  padding: 3px 6px;
+  border-radius: 3px;
+  color: #ffffff !important;
+  white-space: nowrap;
+}
+
+.metric-value-wrap {
+  margin: 14px 0 10px 0;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  position: relative;
+  z-index: 2;
+}
+
+.metric-main-figure {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.metric-num {
+  font-family: var(--font-mono);
+  font-size: clamp(1.8rem, 3vw, 2.7rem);
+  font-weight: 900 !important;
+  line-height: 1;
+  color: #ffffff !important;
+  overflow-wrap: anywhere;
+  text-shadow: none !important;
+}
+
+.metric-unit {
+  font-family: var(--font-mono);
+  font-size: .80rem;
+  font-weight: 900 !important;
+  color: #d1d5db !important;
+}
+
+.unit-toggle-tag {
+  font-family: var(--font-mono);
+  font-size: .60rem;
+  font-weight: 900 !important;
+  color: #ffffff !important;
+  background: transparent !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.5) !important;
+  padding: 2px 7px;
+  border-radius: 3px;
+  cursor: pointer;
+  letter-spacing: .05em;
+  transition: all 0.2s ease;
+}
+
+.metric-card:hover .unit-toggle-tag {
+  background: #ffffff !important;
+  color: #000000 !important;
+}
+
+/* Sparklines */
+.sparkline-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 4px 0 8px 0;
+  position: relative;
+  z-index: 2;
+}
+
+.sparkline-canvas {
+  width: 100%;
+  height: 24px;
+  display: block;
+}
+
+/* Mini indicator tracks */
+.mini-bar-track {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+  overflow: hidden;
+  margin: 4px 0 8px 0;
+  position: relative;
+  z-index: 2;
+}
+
+.mini-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #38bdf8, #818cf8, #c084fc);
+  border-radius: 2px;
+  transition: width 0.4s ease;
+  box-shadow: none !important;
+}
+
+.temp-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #38bdf8, #34d399, #fbbf24, #ef4444);
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+
+.metric-footer {
+  border-top: 1.5px solid rgba(255, 255, 255, 0.2);
+  padding-top: 11px;
+  font-family: var(--font-mono);
+  font-size: .62rem;
+  color: #d1d5db !important;
+  font-weight: 800 !important;
+  flex-wrap: wrap;
+}
+
+.metric-footer strong {
+  color: #ffffff !important;
+  font-weight: 900 !important;
+}
+
+.metric-card.alert {
+  border-color: #ef4444 !important;
+  background: rgba(239, 68, 68, 0.15) !important;
+  box-shadow: none !important;
+}
+
+.metric-card.alert .metric-num {
+  color: #f87171 !important;
+}
+
+.metric-card.alert .metric-status {
+  color: #fca5a5 !important;
+  background: rgba(239, 68, 68, 0.25) !important;
+  border-color: #ef4444 !important;
+}
+
+/* ECG OSCILLOSCOPE */
+
+.oscilloscope-wrapper {
+  padding: 16px 18px;
+}
+
+.oscilloscope-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 12px;
+  font-family: sans-serif;
+  font-size: .68rem;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  position: relative;
+  z-index: 2;
+}
+
+.ecg-title-block {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ecg-lead-tag {
+  color: #ffffff !important;
+  font-weight: 900 !important;
+  background: transparent !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.5) !important;
+  padding: 2px 7px;
+  border-radius: 3px;
+  letter-spacing: .08em;
+}
+
+.ecg-controls-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.ecg-btn-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ecg-control-label {
+  font-size: .62rem;
+  color: #d1d5db !important;
+  font-weight: 900 !important;
+  margin-right: 2px;
+}
+
+.ecg-pill-btn {
+  background: transparent !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.5) !important;
+  border-radius: 3px;
+  color: #ffffff !important;
+  font-family: var(--font-mono);
+  font-size: .62rem;
+  font-weight: 900 !important;
+  padding: 4px 7px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ecg-pill-btn:hover {
+  background: #ffffff !important;
+  color: #000000 !important;
+}
+
+.ecg-pill-btn.active {
+  background: #ffffff !important;
+  color: #000000 !important;
+  border-color: #ffffff !important;
+}
+
+.ecg-color-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--c);
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ecg-color-dot:hover {
+  transform: scale(1.2);
+}
+
+.ecg-color-dot.active {
+  border-color: #ffffff;
+  box-shadow: none;
+}
+
+.ecg-canvas-wrap {
+  position: relative;
+  width: 100%;
+  cursor: crosshair;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.ecg-reticle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(192, 132, 252, 0.55);
+  box-shadow: none;
+  pointer-events: none;
+  display: none;
+  z-index: 3;
+}
+
+.ecg-reticle-badge {
+  position: absolute;
+  top: 8px;
+  transform: translateX(-50%);
+  background: rgba(15, 18, 26, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 2px 7px;
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: .58rem;
+  color: #e9d5ff;
+  pointer-events: none;
+  white-space: nowrap;
+  box-shadow: none;
+}
+
+.ecg-paused-overlay {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background: rgba(239, 68, 68, 0.25);
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  color: #fca5a5;
+  font-family: var(--font-mono);
+  font-size: .62rem;
+  padding: 4px 9px;
+  border-radius: 3px;
+  letter-spacing: .1em;
+  z-index: 2;
+  box-shadow: none;
+}
+
+#ecg-canvas {
+  width: 100%;
+  height: 180px;
+  display: block;
+}
+
+/* HARDWARE TEST BENCH */
+
+.test-bench {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+}
+
+.test-bench-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  position: relative;
+  z-index: 2;
+}
+
+.test-bench-label {
+  font-family: var(--font-mono);
+  font-size: .70rem;
+  color: #ffffff !important;
+  font-weight: 900 !important;
+}
+
+.bench-tabs {
+  display: flex;
+  gap: 4px;
+}
+
+.bench-tab-btn {
+  background: transparent !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.45) !important;
+  border-radius: 3px;
+  color: #ffffff !important;
+  font-family: var(--font-mono);
+  font-size: .62rem;
+  font-weight: 900 !important;
+  padding: 4px 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.bench-tab-btn:hover {
+  background: #ffffff !important;
+  color: #000000 !important;
+}
+
+.bench-tab-btn.active {
+  background: #ffffff !important;
+  color: #000000 !important;
+  border-color: #ffffff !important;
+}
+
+.bench-presets-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  position: relative;
+  z-index: 2;
+}
+
+.bench-btn {
+  background: transparent !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.45) !important;
+  border:0.4em solid;
+    border-radius:2em 0 2em 0;
+  color: #ffffff !important;
+  font-family: var(--font-mono);
+  font-size: .66rem;
+  font-weight: 900 !important;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.bench-btn:hover {
+  background: #ffffff !important;
+  color: #000000 !important;
+}
+
+.bench-btn.active {
+  background: #ffffff !important;
+  color: #000000 !important;
+  border-color: #ffffff !important;
+}
+
+.bench-btn.warn:hover,
+.bench-btn.warn.active {
+  border-color: #fbbf24 !important;
+  color: #000000 !important;
+  background: #fbbf24 !important;
+}
+
+.bench-btn.alert:hover,
+.bench-btn.alert.active {
+  border-color: #ef4444 !important;
+  color: #ffffff !important;
+  background: #ef4444 !important;
+}
+
+.bench-btn.crit:hover,
+.bench-btn.crit.active {
+  border-color: #ec4899 !important;
+  color: #ffffff !important;
+  background: #ec4899 !important;
+}
+
+/* Sliders Deck */
+.bench-sliders-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+  gap: 14px;
+  align-items: end;
+  padding-top: 4px;
+  position: relative;
+  z-index: 2;
+}
+
+.slider-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.slider-label-row {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: .65rem;
+  color: #ffffff !important;
+  font-weight: 900 !important;
+}
+
+.slider-readout {
+  color: #ffffff !important;
+  font-weight: 900 !important;
+}
+
+.bench-slider {
+  width: 100%;
+  accent-color: #ffffff;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+}
+
+.bench-reset-btn {
+  height: 34px;
+  white-space: nowrap;
+}
+
+.manual-test-feedback {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #94a3b8;
+  transition: all 0.25s ease;
+}
+
+.manual-test-feedback.abnormal {
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.45);
+  color: #fca5a5;
+  box-shadow: 0 0 14px rgba(239, 68, 68, 0.15);
+}
+
+.manual-test-feedback.normal {
+  background: rgba(34, 197, 94, 0.08);
+  border-color: rgba(34, 197, 94, 0.3);
+  color: #86efac;
+}
+
+/* TELEMETRY CONSOLE */
+
+.stream-console {
+  overflow: hidden;
+}
+
+.console-header {
+  background: transparent !important;
+  padding: 10px 16px;
+  font-family: var(--font-mono);
+  font-size: .68rem;
+  color: #ffffff !important;
+  font-weight: 900 !important;
+  border-bottom: 1.5px solid rgba(255, 255, 255, 0.2) !important;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  position: relative;
+  z-index: 2;
+}
+
+.console-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.live-stream-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: .60rem;
+  color: #4ade80 !important;
+  font-weight: 900 !important;
+  background: rgba(34, 197, 94, 0.2) !important;
+  border: 1.5px solid #22c55e !important;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.live-stream-badge.paused {
+  color: #fbbf24 !important;
+  background: rgba(251, 191, 36, 0.2) !important;
+  border-color: #fbbf24 !important;
+}
+
+.live-stream-badge .badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: none;
+}
+
+.pkt-badge {
+  color: #ffffff !important;
+  font-weight: 900 !important;
+  font-size: .62rem;
+  padding: 2px 6px;
+  background: transparent !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.45) !important;
+  border-radius: 3px;
+}
+
+.console-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.console-action-btn {
+  background: transparent !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.45) !important;
+  border-radius: 3px;
+  color: #ffffff !important;
+  font-family: var(--font-mono);
+  font-size: .62rem;
+  font-weight: 900 !important;
+  padding: 4px 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.console-action-btn:hover {
+  background: #ffffff !important;
+  color: #000000 !important;
+}
+
+#console-stream {
+  padding: 16px;
+  min-height: 105px;
+  font-family: var(--font-mono);
+  font-size: .72rem;
+  font-weight: 800 !important;
+  color: #ffffff !important;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.8;
+  background: transparent;
+  position: relative;
+  z-index: 2;
+}
+
+.disclaimer {
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  font-size: .63rem;
+  line-height: 1.8;
+  padding-bottom: 12px;
+}
+
+/* MOBILE */
+
+@media (max-width: 1000px) {
+  .sidebar {
+    width: 225px;
+    min-width: 225px;
+    padding: 23px 14px;
+  }
+
+  .viewport {
+    padding: 26px 22px;
+  }
+
+  .metrics-grid {
+    gap: 10px;
+  }
+
+  .metric-card {
+    padding: 13px;
+  }
+
+  .metric-footer {
+    font-size: .54rem;
+  }
+
+  .bench-sliders-row {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* TWO-DOTS MOBILE MENU BUTTON & SIDEBAR OVERLAY */
+.mobile-dots-btn {
+  display: none;
+  position: fixed;
+  top: 14px;
+  left: 14px;
+  width: 36px;
+  height: 36px;
+  background: rgba(15, 18, 24, 0.88);
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  border-radius: 9px;
+  cursor: pointer;
+  z-index: 10002;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 5px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+  padding: 0;
+  transition: all 0.2s ease;
+}
+
+.mobile-dots-btn .dot {
+  width: 5.5px;
+  height: 5.5px;
+  border-radius: 50%;
+  background: #ffffff;
+  display: block;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.7);
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.mobile-dots-btn:hover, .mobile-dots-btn:active {
+  background: rgba(168, 85, 247, 0.25);
+  border-color: #c084fc;
+}
+
+.mobile-dots-btn.active .dot {
+  background: #c084fc;
+  box-shadow: 0 0 8px #c084fc;
+}
+
+.sidebar-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 9998;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.sidebar-backdrop.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.sidebar-close-btn {
+  display: none;
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 30px;
+  height: 30px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 700;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sidebar-close-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: #ef4444;
+  color: #fca5a5;
+}
+
+@media (max-width: 768px) {
+  body {
+    height: 100vh;
+  }
+
+  .mobile-dots-btn {
+    display: flex !important;
+  }
+
+  .sidebar-backdrop {
+    display: block !important;
+  }
+
+  .sidebar-close-btn {
+    display: flex !important;
+  }
+
+  .sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    height: 100vh !important;
+    width: 280px !important;
+    min-width: 280px !important;
+    max-width: 82vw !important;
+    background: rgba(10, 12, 17, 0.96) !important;
+    backdrop-filter: blur(18px) !important;
+    -webkit-backdrop-filter: blur(18px) !important;
+    border-right: 1.5px solid rgba(255, 255, 255, 0.18) !important;
+    box-shadow: 12px 0 35px rgba(0, 0, 0, 0.85) !important;
+    z-index: 10000 !important;
+    transform: translate3d(-100%, 0, 0) !important;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 24px 18px !important;
+    overflow-y: auto !important;
+  }
+
+  .sidebar.mobile-open {
+    transform: translate3d(0, 0, 0) !important;
+  }
+
+  .brand-code,
+  .brand-title,
+  .brand-sub,
+  .nav-text,
+  .sidebar-status {
+    display: block !important;
+  }
+
+  .sidebar-brand {
+    height: auto !important;
+    margin-top: 10px;
+  }
+
+  .sidebar-nav {
+    width: 100% !important;
+    margin: 24px 0 !important;
+  }
+
+  .nav-btn {
+    justify-content: flex-start !important;
+    padding: 12px 14px !important;
+  }
+
+  .viewport {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    padding: 22px 14px !important;
+    padding-top: 58px !important;
+    gap: 18px;
+  }
+
+  .panel-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .metric-card {
+    min-height: 145px;
+    padding: 17px;
+  }
+
+  .metric-num {
+    font-size: 2.2rem;
+  }
+
+  #ecg-canvas {
+    height: 145px;
+  }
+
+  .test-bench {
+    align-items: stretch;
+  }
+
+  .test-bench-label {
+    width: 100%;
+    line-height: 1.8;
+  }
+
+  .bench-btn {
+    flex: 1 1 42%;
+  }
+
+  .bench-sliders-row {
+    grid-template-columns: 1fr;
+  }
+
+  .ecg-controls-bar {
+    justify-content: flex-start;
+  }
+}
+
+/* SITE FOOTER */
+.site-footer {
+  margin-top: 40px;
+  padding: 24px 16px 16px 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  text-align: center;
+  background: transparent !important;
+  flex-shrink: 0;
+  width: 100%;
+}
+
+.footer-title {
+  font-size: 0.72rem;
+  font-weight: 700 !important;
+  letter-spacing: 0.07em !important;
+  color: #f1f5f9;
+  text-transform: uppercase;
+  line-height: 1.5;
+  max-width: 900px;
+}
+
+.footer-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.footer-link {
+  font-size: 0.70rem;
+  font-weight: 700 !important;
+  letter-spacing: 0.07em !important;
+  color: #c084fc;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.footer-link:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
+.footer-divider {
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 0.70rem;
+}
+
+/* EMERGENCY HEALTH DANGER BLINKING BANNER (5S CRITICAL SOUND) */
+.danger-alarm-banner {
+  background: rgba(220, 38, 38, 0.42) !important;
+  border: 2px solid #ef4444 !important;
+  border-radius: 8px;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  color: #ffffff !important;
+  font-family: sans-serif !important;
+  font-weight: 700 !important;
+  font-size: 0.85rem;
+  letter-spacing: 0.07em !important;
+  animation: emergencyRedBlink 0.55s infinite alternate ease-in-out;
+  margin-bottom: 12px;
+  z-index: 100;
+  box-shadow: 0 0 28px rgba(239, 68, 68, 0.85), inset 0 0 14px rgba(220, 38, 38, 0.5);
+}
+
+@keyframes emergencyRedBlink {
+  0% {
+    background: rgba(185, 28, 28, 0.28) !important;
+    border-color: rgba(239, 68, 68, 0.65) !important;
+    box-shadow: 0 0 12px rgba(239, 68, 68, 0.5);
+  }
+  50% {
+    background: rgba(239, 68, 68, 0.72) !important;
+    border-color: #ff1a1a !important;
+    box-shadow: 0 0 35px rgba(255, 26, 26, 1), inset 0 0 20px rgba(255, 0, 0, 0.6);
+  }
+  100% {
+    background: rgba(153, 27, 27, 0.35) !important;
+    border-color: rgba(239, 68, 68, 0.85) !important;
+    box-shadow: 0 0 16px rgba(239, 68, 68, 0.6);
+  }
+}
+
+.danger-tag-blink {
+  background: #ef4444;
+  color: #ffffff !important;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-weight: 900 !important;
+  font-size: 0.76rem;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  animation: emergencyBadgeFlash 0.45s infinite alternate;
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.9);
+  border: 1px solid #fca5a5;
+}
+
+@keyframes emergencyBadgeFlash {
+  0% { opacity: 1; transform: scale(1); filter: drop-shadow(0 0 8px #ff0000); }
+  100% { opacity: 0.35; transform: scale(0.97); filter: drop-shadow(0 0 0px #ff0000); }
+}
+
+.danger-text-main {
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  font-size: 0.86rem;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase;
+  animation: emergencyTextRedBlink 0.5s infinite alternate;
+  text-shadow: 0 0 10px rgba(255, 0, 0, 0.85);
+}
+
+@keyframes emergencyTextRedBlink {
+  0% { color: #ffffff; text-shadow: 0 0 12px #ff2222, 0 0 24px #ff0000; }
+  100% { color: #fee2e2; text-shadow: 0 0 4px #dc2626; }
+}
+
+.danger-subtext {
+  font-size: 0.74rem;
+  color: #fee2e2 !important;
+  opacity: 0.95;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-left: 6px;
+}
+
+.danger-countdown {
+  background: #dc2626;
+  color: #ffffff !important;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  border: 1px solid #f87171;
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.7);
+  animation: emergencyBadgeFlash 0.45s infinite alternate;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- Animated background -->
+<div id="slats-background" aria-hidden="true">
+  <canvas id="slats-canvas"></canvas>
+</div>
+
+<!-- Mobile Two-Dots Menu Button -->
+<button type="button" class="mobile-dots-btn" id="mobile-sidebar-toggle" onclick="toggleMobileSidebar()" title="Toggle Side Navigation" aria-label="Toggle Side Navigation">
+  <span class="dot"></span>
+  <span class="dot"></span>
+</button>
+
+<!-- Mobile Sidebar Backdrop Overlay -->
+<div class="sidebar-backdrop" id="sidebar-backdrop" onclick="closeMobileSidebar()" aria-hidden="true"></div>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <button type="button" class="sidebar-close-btn" onclick="closeMobileSidebar()" aria-label="Close Side Navigation" title="Close Side Navigation">✕</button>
+  <div>
+    <div class="sidebar-brand">
+      <span class="brand-code">HEALTH INTELLIGENCE / 01</span>
+      <h1 class="brand-title">AI Powered<br>Health Care</h1>
+      <p class="brand-sub">PHYSIOLOGICAL MONITORING SYSTEM</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="index.html" class="nav-btn nav-btn-home btn seville small icon-before chevrons-right active"><span class="nav-text">Home</span></a>
+      <a href="triage.html" class="nav-btn btn seville small icon-before chevrons-right"><span class="nav-text">Diagnostic Analysis</span></a>
+      <a href="personal.html" class="nav-btn btn seville small icon-before chevrons-right"><span class="nav-text">Personal Health Info</span></a>
+      <a href="https://vasuki-2-0.vercel.app" class="nav-btn btn seville small icon-before chevrons-right"><span class="nav-text">Clinical Queries</span></a>
+      <a href="profile.html" class="nav-btn btn seville small icon-before chevrons-right"><span class="nav-text"> Profile</span></a>
+    </nav>
+  </div>
+
+  <div class="sidebar-status">
+    <div class="status-indicator">
+      <span class="indicator-dot" id="system-dot"></span>
+      <span id="system-status-text">SIMULATION ACTIVE</span>
+    </div>
+    <div class="status-row">
+      <span>SAMPLING</span><span>2500 ms</span>
+    </div>
+    <div class="status-row">
+      <span>DATA SOURCE</span><span id="source-status">SIMULATED</span>
+    </div>
+    
+  </div>
+</aside>
+
+<!-- Main dashboard -->
+<main class="viewport">
+
+  <header class="panel-header">
+    <div>
+      <h2 class="panel-heading">AI POWERED HEALTH CARE SYSTEM</h2>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 14px;">
+      <label class="source-control" onclick="playBellSound()" title="Switch Data Feed Source">
+        <input type="checkbox" id="feed-source-toggle">
+        <span id="source-label">Source: Emulated</span>
+      </label>
+      <button type="button" onclick="logoutSession()" class="top-signout-btn" title="Sign Out">
+        <span>⏻</span> Sign Out
+      </button>
+    </div>
+  </header>
+
+  <!-- 5S EMERGENCY HEALTH DANGER BLINKING BANNER -->
+  <div id="danger-alarm-banner" class="danger-alarm-banner" style="display: none;">
+    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+      <span class="danger-tag-blink">🚨 EMERGENCY</span>
+      <span class="danger-text-main" id="danger-alarm-message">DANGER IN HEALTH: CRITICAL PHYSIOLOGICAL TRIGGER DETECTED</span>
+      <span class="danger-subtext" id="danger-alarm-sub">[IMMEDIATE ATTENTION REQUIRED]</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <span class="danger-countdown" id="danger-alarm-countdown">8s</span>
+    </div>
+  </div>
+
+  <section class="metrics-grid">
+
+    <article class="metric-card glass-box" id="card-hr" onclick="toggleHrUnit()" title="Click to toggle BPM / R-R interval">
+      <div class="metric-top">
+        <span class="metric-label"><span class="pulse-beacon" id="hr-pulse-dot"></span>HEART RATE [PULSE]</span>
+        <span class="metric-status" id="hr-status-badge">SIMULATED</span>
+      </div>
+
+      <div class="metric-value-wrap">
+        <div class="metric-main-figure">
+          <span class="metric-num" id="val-hr">74.0</span>
+          <span class="metric-unit" id="unit-hr">BPM</span>
+        </div>
+        <span class="unit-toggle-tag" id="tag-hr">⇄ R-R ms</span>
+      </div>
+
+      <div class="sparkline-row">
+        <canvas class="sparkline-canvas" id="spark-hr" width="220" height="24"></canvas>
+      </div>
+
+      <div class="metric-footer">
+        
+        <span id="hr-note">DEMO</span>
+      </div>
+    </article>
+
+    <article class="metric-card glass-box" id="card-spo2" onclick="toggleSpo2Unit()" title="Click to toggle SpO2% / PaO2">
+      <div class="metric-top">
+        <span class="metric-label">OXYGEN SATURATION</span>
+        <span class="metric-status" id="spo2-status-badge">SIMULATED</span>
+      </div>
+
+      <div class="metric-value-wrap">
+        <div class="metric-main-figure">
+          <span class="metric-num" id="val-spo2">98.2</span>
+          <span class="metric-unit" id="unit-spo2">% SpO₂</span>
+        </div>
+        <span class="unit-toggle-tag" id="tag-spo2">⇄ PaO₂</span>
+      </div>
+
+      <div class="mini-bar-track">
+        <div class="mini-bar-fill" id="spo2-bar" style="width: 98%;"></div>
+      </div>
+
+      <div class="sparkline-row">
+        <canvas class="sparkline-canvas" id="spark-spo2" width="220" height="24"></canvas>
+      </div>
+
+      <div class="metric-footer">
+        <span>REFERENCE: OFTEN 95–100%</span>
+        <span id="spo2-note">DEMO</span>
+      </div>
+    </article>
+
+    <article class="metric-card glass-box" id="card-temp" onclick="toggleTempUnit()" title="Click to toggle °C / °F">
+      <div class="metric-top">
+        <span class="metric-label">TEMPERATURE</span>
+        <span class="metric-status" id="temp-status-badge">SIMULATED</span>
+      </div>
+
+      <div class="metric-value-wrap">
+        <div class="metric-main-figure">
+          <span class="metric-num" id="val-temp">36.6</span>
+          <span class="metric-unit" id="unit-temp">°C</span>
+        </div>
+        <span class="unit-toggle-tag" id="tag-temp">⇄ °F</span>
+      </div>
+
+      <div class="mini-bar-track">
+        <div class="temp-bar-fill" id="temp-bar" style="width: 50%;"></div>
+      </div>
+
+      <div class="sparkline-row">
+        <canvas class="sparkline-canvas" id="spark-temp" width="220" height="24"></canvas>
+      </div>
+
+      <div class="metric-footer">
+        <span>FAHRENHEIT: <strong id="val-temp-f">97.9</strong> °F</span>
+        <span id="temp-note">DEMO</span>
+      </div>
+    </article>
+
+  </section>
+
+  <section class="oscilloscope-wrapper glass-box">
+    <div class="oscilloscope-header">
+      <div class="ecg-title-block">
+        <span class="ecg-lead-tag">LEAD II • REAL-TIME</span>
+      </div>
+
+      <div class="ecg-controls-bar">
+        <div class="ecg-btn-group">
+          <span class="ecg-control-label">SPEED:</span>
+          <button class="ecg-pill-btn" onclick="setEcgSpeed(0.5, this)">0.5x</button>
+          <button class="ecg-pill-btn active" onclick="setEcgSpeed(1.0, this)">1x</button>
+          <button class="ecg-pill-btn" onclick="setEcgSpeed(2.0, this)">2x</button>
+        </div>
+
+        <div class="ecg-btn-group">
+          <span class="ecg-control-label">THEME:</span>
+          <button class="ecg-color-dot active" style="--c: #c084fc;" title="Violet Glow" onclick="setEcgColor('#c084fc', 'rgba(168,85,247,0.55)', this)"></button>
+          <button class="ecg-color-dot" style="--c: #38bdf8;" title="Neon Cyan" onclick="setEcgColor('#38bdf8', 'rgba(56,189,248,0.55)', this)"></button>
+          <button class="ecg-color-dot" style="--c: #34d399;" title="Emerald" onclick="setEcgColor('#34d399', 'rgba(52,211,153,0.55)', this)"></button>
+          <button class="ecg-color-dot" style="--c: #fbbf24;" title="Amber" onclick="setEcgColor('#fbbf24', 'rgba(251,191,36,0.55)', this)"></button>
+        </div>
+
+        <div class="ecg-btn-group">
+          <button class="ecg-pill-btn active" id="btn-ecg-grid" onclick="toggleEcgGrid(this)">GRID</button>
+          <button class="ecg-pill-btn" id="btn-ecg-freeze" onclick="toggleEcgFreeze(this)">⏸ FREEZE</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="ecg-canvas-wrap" id="ecg-container-wrap">
+      <div class="ecg-reticle" id="ecg-reticle">
+        <span class="ecg-reticle-badge" id="ecg-badge">+0.00 mV</span>
+      </div>
+      <div class="ecg-paused-overlay" id="ecg-paused-overlay" style="display: none;">TRACE FROZEN</div>
+      <canvas id="ecg-canvas" width="1000" height="180"></canvas>
+    </div>
+  </section>
+
+  <section class="test-bench glass-box">
+    <div class="test-bench-header">
+      <span class="test-bench-label">DEMO TELEMETRY CONTROLS &amp; SENSOR BENCH:</span>
+      <div class="bench-tabs">
+        <button class="bench-tab-btn active" id="tab-presets" onclick="switchBenchTab('presets')">SCENARIO PRESETS</button>
+        <button class="bench-tab-btn" id="tab-manual" onclick="switchBenchTab('manual')">MANUAL SENSOR TUNER</button>
+      </div>
+    </div>
+
+    <!-- Presets panel -->
+    <div class="bench-presets-row" id="bench-presets-panel">
+      <button class="bench-btn active" id="btn-normal" onclick="injectAnomaly('normal')">FORCE NORMAL</button>
+      <button class="bench-btn warn" id="btn-tachy" onclick="injectAnomaly('tachycardia')">HIGH HEART RATE</button>
+      <button class="bench-btn" id="btn-brady" onclick="injectAnomaly('bradycardia')">LOW HEART RATE</button>
+      <button class="bench-btn alert" id="btn-hypo" onclick="injectAnomaly('hypoxia')">LOW SpO₂</button>
+      <button class="bench-btn alert" id="btn-fever" onclick="injectAnomaly('fever')">HIGH TEMP</button>
+      <button class="bench-btn crit" id="btn-multi" onclick="injectAnomaly('critical')">CRITICAL MULTI-ANOMALY</button>
+    </div>
+
+    <!-- Manual sliders panel -->
+    <div class="bench-sliders-row" id="bench-sliders-panel" style="display: none;">
+      <div class="slider-group">
+        <div class="slider-label-row">
+          <span>HEART RATE</span>
+          <span class="slider-readout" id="slider-hr-val">74 BPM</span>
+        </div>
+        <input type="range" class="bench-slider" id="slider-hr" min="40" max="180" step="1" value="74" oninput="onSliderChange()" onchange="onSliderCommit()">
+      </div>
+
+      <div class="slider-group">
+        <div class="slider-label-row">
+          <span>OXYGEN SpO₂</span>
+          <span class="slider-readout" id="slider-spo2-val">98.2 %</span>
+        </div>
+        <input type="range" class="bench-slider" id="slider-spo2" min="70" max="100" step="0.5" value="98.2" oninput="onSliderChange()" onchange="onSliderCommit()">
+      </div>
+
+      <div class="slider-group">
+        <div class="slider-label-row">
+          <span>TEMPERATURE</span>
+          <span class="slider-readout" id="slider-temp-val">36.6 °C</span>
+        </div>
+        <input type="range" class="bench-slider" id="slider-temp" min="34.0" max="41.5" step="0.1" value="36.6" oninput="onSliderChange()" onchange="onSliderCommit()">
+      </div>
+
+      <button class="bench-btn bench-reset-btn" onclick="resetToAutoSimulation()">RESUME AUTO SIMULATION</button>
+
+      <div class="manual-test-feedback normal" id="manual-test-feedback">
+        <span class="feedback-icon" id="manual-feedback-icon">⚡</span>
+        <span id="manual-feedback-text">Adjust sliders to test physiological vitals. All tested values are recorded and appear in the ABNORMAL DATA table in personal.html.</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="stream-console glass-box">
+    <div class="console-header">
+      <div class="console-title-wrap">
+        <span class="live-stream-badge" id="stream-live-badge"><span class="badge-dot"></span> LIVE</span>
+        <span>TELEMETRY CONSOLE / DEMO DATA STREAM</span>
+        <span class="pkt-badge" id="pkt-badge">PKT #0</span>
+      </div>
+      <div class="console-actions">
+        <button class="console-action-btn" id="btn-copy-json" onclick="copyConsoleJSON()">
+          <span id="copy-btn-text">📋 Copy JSON</span>
+        </button>
+        <button class="console-action-btn" id="btn-pause-stream" onclick="toggleConsoleStream()">
+          <span id="pause-btn-text">⏸ Pause Stream</span>
+        </button>
+        <button class="console-action-btn" onclick="clearConsoleStream()">🗑 Clear</button>
+      </div>
+    </div>
+    <pre id="console-stream">> Initializing dashboard...
+> Starting simulated telemetry...</pre>
+  </section>
+
+  
+  <!-- SITE FOOTER -->
+  <footer class="site-footer">
+    <div class="footer-title">
+      AI POWERD HEALTH CARE SYSTEM DEVELOPED BY TOONY NIRMAL &amp; TEAM SUPERVISED BY DR.SARVANAN
+    </div>
+    <div class="footer-links">
+      <a href="privacy.html" class="footer-link">Privacy Policy</a>
+      <span class="footer-divider">•</span>
+      <a href="terms.html" class="footer-link">Terms and Conditions</a>
+    </div>
+  </footer>
+</main>
+
+<script>
+/* =========================================================
+   ANIMATED MICRO-SLATS BACKGROUND
+   Standalone canvas implementation; no React/OGL required.
+   ========================================================= */
+
+(() => {
+  const canvas = document.getElementById('slats-canvas');
+  const ctx = canvas.getContext('2d');
+
+  if (!ctx) return;
+
+  let width = 0;
+  let height = 0;
+  let dpr = 1;
+  let animationId = 0;
+  let time = 0;
+  let lastFrame = 0;
+
+  const reducedMotion = window.matchMedia(
+    '(prefers-reduced-motion: reduce)'
+  ).matches;
+
+  const slatWidth = 9;
+  const slatHeight = 23;
+  const gap = 4;
+  const spacingX = slatWidth + gap;
+  const spacingY = slatHeight + gap;
+
+  function resize() {
+    width = window.innerWidth;
+    height = window.innerHeight;
+    dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+
+    canvas.width = Math.round(width * dpr);
+    canvas.height = Math.round(height * dpr);
+    canvas.style.width = width + 'px';
+    canvas.style.height = height + 'px';
+
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function roundedRect(x, y, w, h, radius) {
+    ctx.beginPath();
+    ctx.roundRect(x, y, w, h, radius);
+  }
+
+  function draw(now) {
+    if (document.hidden) {
+      animationId = 0;
+      return;
+    }
+
+    if (!reducedMotion && now - lastFrame < 33) {
+      animationId = requestAnimationFrame(draw);
+      return;
+    }
+
+    lastFrame = now;
+    time = reducedMotion ? 0 : now * 0.00035;
+
+    ctx.clearRect(0, 0, width, height);
+
+    const columns = Math.ceil(width / spacingX) + 2;
+    const rows = Math.ceil(height / spacingY) + 2;
+    const startX = (width % spacingX) / 2;
+    const startY = (height % spacingY) / 2;
+
+    for (let row = 0; row < rows; row++) {
+      for (let col = 0; col < columns; col++) {
+        const x = col * spacingX + startX;
+        const y = row * spacingY + startY;
+
+        const waveA = Math.sin(x * 0.008 + time * 2.2);
+        const waveB = Math.cos(y * 0.012 - time * 1.6);
+        const waveC = Math.sin((x + y) * 0.004 + time);
+
+        let level = (waveA + waveB + waveC + 3) / 6;
+
+        const centerX = x + slatWidth / 2;
+        const centerY = y + slatHeight / 2;
+
+        const heightScale = 0.35 + level * 0.65;
+        const renderedHeight = slatHeight * heightScale;
+        const tilt = Math.sin(x * 0.003 + y * 0.005 + time) * 0.10;
+        const alpha = Math.min(0.30, 0.06 + level * 0.24);
+
+        ctx.save();
+        ctx.translate(centerX, centerY);
+        ctx.rotate(tilt);
+
+        const gradient = ctx.createLinearGradient(
+          -slatWidth / 2, -renderedHeight / 2,
+          slatWidth / 2, renderedHeight / 2
+        );
+
+        gradient.addColorStop(0, `rgba(88, 28, 135, ${alpha})`);
+        gradient.addColorStop(0.55, `rgba(147, 51, 234, ${alpha * 0.85})`);
+        gradient.addColorStop(1, `rgba(192, 132, 252, ${alpha * 0.65})`);
+
+        roundedRect(
+          -slatWidth / 2,
+          -renderedHeight / 2,
+          slatWidth,
+          renderedHeight,
+          3
+        );
+
+        ctx.fillStyle = gradient;
+        ctx.fill();
+
+        if (level > 0.78) {
+          ctx.strokeStyle = `rgba(216, 180, 254, ${alpha * 0.35})`;
+          ctx.lineWidth = 0.6;
+          ctx.stroke();
+        }
+
+        ctx.restore();
+      }
+    }
+
+    animationId = requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('resize', resize, { passive: true });
+
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && animationId === 0) {
+      lastFrame = 0;
+      animationId = requestAnimationFrame(draw);
+    }
+  });
+
+  resize();
+  animationId = requestAnimationFrame(draw);
+})();
+
+/* =========================================================
+   DASHBOARD TELEMETRY & INTERACTIVE ENGINE
+   ========================================================= */
+
+let tick = 0;
+let forcedAnomaly = null;
+let hr = 74.0;
+let spo2 = 98.2;
+let temp = 36.6;
+let condition = 'Normal';
+let isManualControl = false;
+let consolePaused = false;
+let packetCount = 0;
+
+// Metric card display modes
+let hrMode = 'bpm';     // 'bpm' or 'rr'
+let spo2Mode = 'spo2';  // 'spo2' or 'pao2'
+let tempMode = 'c';     // 'c' or 'f'
+
+// History buffers for real-time sparklines
+const hrHistory = [72, 73, 74, 73, 75, 74, 73, 74, 75, 74];
+const spo2History = [98.2, 98.1, 98.2, 98.3, 98.2, 98.1, 98.2];
+const tempHistory = [36.6, 36.6, 36.7, 36.6, 36.6, 36.7, 36.6];
+
+/* =========================================================
+   5-SECOND CLINICAL DANGER ALARM SOUND ENGINE (Web Audio API)
+   ========================================================= */
+let audioCtx = null;
+let isAlarmPlaying = false;
+let alarmTimeoutId = null;
+let alarmCountdownInterval = null;
+let lastAlarmTime = 0;
+let wasHighTrigger = false;
+
+function getAudioContext() {
+  if (!audioCtx) {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (AudioCtx) {
+      audioCtx = new AudioCtx();
+    }
+  }
+  if (audioCtx && audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
+  return audioCtx;
+}
+
+// Ensure audio context is ready on any user click, touch, or keypress
+['click', 'touchstart', 'keydown'].forEach(evt => {
+  window.addEventListener(evt, () => {
+    getAudioContext();
+  }, { once: false, passive: true });
+});
+
+/* =========================================================
+   ACOUSTIC BELL CHIME SYNTHESIZER (SOURCE BUTTON CLICK)
+   Crisp physical brass bell simulation with natural overtones
+   ========================================================= */
+let lastBellTime = 0;
+function playBellSound() {
+  const now = Date.now();
+  if (now - lastBellTime < 220) return; // Debounce so clicking label or input rings exactly one bell
+  lastBellTime = now;
+
+  const ctx = getAudioContext();
+  if (!ctx) return;
+  if (ctx.state === 'suspended') {
+    ctx.resume();
+  }
+
+  try {
+    const t0 = ctx.currentTime;
+    const duration = 2.7;
+    const tEnd = t0 + duration;
+
+    // Master bell output gain with smooth natural exponential ring-out
+    const master = ctx.createGain();
+    master.gain.setValueAtTime(0.38, t0);
+    master.gain.exponentialRampToValueAtTime(0.0001, tEnd);
+    master.connect(ctx.destination);
+
+    // Natural physical bell spectrum (pure harmonic + inharmonic bell partials)
+    const bellPartials = [
+      { freq: 880,  gain: 0.35, decay: 1.6 }, // Fundamental body (A5 bell)
+      { freq: 1056, gain: 0.20, decay: 1.3 }, // Minor third tierce
+      { freq: 1320, gain: 0.22, decay: 1.1 }, // Perfect fifth quint
+      { freq: 1760, gain: 0.26, decay: 0.9 }, // Octave nominal
+      { freq: 2640, gain: 0.16, decay: 0.6 }, // High shimmer partial
+      { freq: 3520, gain: 0.14, decay: 0.25}  // Metallic strike transient ping
+    ];
+
+    bellPartials.forEach(p => {
+      const osc = ctx.createOscillator();
+      const g = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(p.freq, t0);
+
+      // Instant clapper strike attack (3ms) & natural bell decay
+      g.gain.setValueAtTime(0.0001, t0);
+      g.gain.linearRampToValueAtTime(p.gain, t0 + 0.003);
+      g.gain.exponentialRampToValueAtTime(0.0001, Math.min(tEnd, t0 + p.decay));
+
+      osc.connect(g);
+      g.connect(master);
+      osc.start(t0);
+      osc.stop(Math.min(tEnd, t0 + p.decay + 0.05));
+    });
+  } catch (err) {
+    console.warn("Bell sound audio error:", err);
+  }
+}
+
+function playDangerAlarm(durationSec = 5.0, dangerReason = null) {
+  const now = Date.now();
+  if (isAlarmPlaying) return;
+  // Cooldown buffer of 2.0 seconds after sound completes to prevent overlapping
+  if (now - lastAlarmTime < (durationSec * 1000 + 2000)) return;
+
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  isAlarmPlaying = true;
+  lastAlarmTime = now;
+
+  showDangerBanner(durationSec, dangerReason);
+
+  try {
+    const startTime = ctx.currentTime;
+    const endTime = startTime + durationSec;
+
+    // Master volume with smooth envelope
+    const masterGain = ctx.createGain();
+    masterGain.gain.setValueAtTime(0.0001, startTime);
+    masterGain.gain.exponentialRampToValueAtTime(0.28, startTime + 0.05);
+    masterGain.gain.setValueAtTime(0.28, endTime - 0.20);
+    masterGain.gain.linearRampToValueAtTime(0.0001, endTime);
+    masterGain.connect(ctx.destination);
+
+    // Clinical Patient Monitor Advisory Tone (Medium-Priority Warning Beeps)
+    // Distinct hospital vital sign warning motif: 880Hz (A5) -> 784Hz (G5) -> 659Hz (E5)
+    // Balanced tone: clinically serious alert, yet gentle and pleasant without screeching
+    const beepBursts = [
+      // Burst 1
+      { delay: 0.00, freq: 880.0, dur: 0.14 },
+      { delay: 0.20, freq: 784.0, dur: 0.14 },
+      { delay: 0.40, freq: 659.2, dur: 0.22 },
+
+      // Burst 2
+      { delay: 1.40, freq: 880.0, dur: 0.14 },
+      { delay: 1.60, freq: 784.0, dur: 0.14 },
+      { delay: 1.80, freq: 659.2, dur: 0.22 },
+
+      // Burst 3
+      { delay: 2.80, freq: 880.0, dur: 0.14 },
+      { delay: 3.00, freq: 784.0, dur: 0.14 },
+      { delay: 3.20, freq: 659.2, dur: 0.22 },
+
+      // Burst 4 (resolving cadence)
+      { delay: 4.20, freq: 880.0, dur: 0.16 },
+      { delay: 4.45, freq: 784.0, dur: 0.25 }
+    ];
+
+    beepBursts.forEach(beep => {
+      const tStart = startTime + beep.delay;
+      const tEnd = tStart + beep.dur;
+      if (tStart >= endTime) return;
+
+      // 1. Primary medical sine wave pulse
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(beep.freq, tStart);
+
+      // Clean medical monitor envelope (12ms crisp attack, body, 40ms decay)
+      gain.gain.setValueAtTime(0.0001, tStart);
+      gain.gain.exponentialRampToValueAtTime(0.35, tStart + 0.015);
+      gain.gain.setValueAtTime(0.30, tStart + beep.dur * 0.7);
+      gain.gain.exponentialRampToValueAtTime(0.0001, tEnd);
+
+      osc.connect(gain);
+      gain.connect(masterGain);
+      osc.start(tStart);
+      osc.stop(tEnd);
+
+      // 2. Warm harmonic overtone (subtle triangle wave for electronic hospital chime presence)
+      const oscHarmonic = ctx.createOscillator();
+      const gainHarmonic = ctx.createGain();
+      oscHarmonic.type = 'triangle';
+      oscHarmonic.frequency.setValueAtTime(beep.freq * 2, tStart);
+
+      gainHarmonic.gain.setValueAtTime(0.0001, tStart);
+      gainHarmonic.gain.exponentialRampToValueAtTime(0.08, tStart + 0.015);
+      gainHarmonic.gain.exponentialRampToValueAtTime(0.0001, tEnd);
+
+      oscHarmonic.connect(gainHarmonic);
+      gainHarmonic.connect(masterGain);
+      oscHarmonic.start(tStart);
+      oscHarmonic.stop(tEnd);
+    });
+
+    clearTimeout(alarmTimeoutId);
+    alarmTimeoutId = setTimeout(() => {
+      isAlarmPlaying = false;
+      hideDangerBanner();
+    }, durationSec * 1000);
+
+  } catch (err) {
+    console.warn("Medical alert audio error:", err);
+    isAlarmPlaying = false;
+  }
+}
+
+function showDangerBanner(durationSec, dangerReason) {
+  const banner = document.getElementById('danger-alarm-banner');
+  if (!banner) return;
+  const msgEl = document.getElementById('danger-alarm-message');
+  const subEl = document.getElementById('danger-alarm-sub');
+  if (msgEl) {
+    msgEl.textContent = dangerReason
+      ? `DANGER IN HEALTH: ${dangerReason}`
+      : 'DANGER IN HEALTH: CRITICAL PHYSIOLOGICAL TRIGGER DETECTED';
+  }
+  if (subEl) {
+    subEl.textContent = '[CRITICAL PHYSIOLOGICAL STATUS — IMMEDIATE ATTENTION REQUIRED]';
+  }
+  banner.style.display = 'flex';
+  const countEl = document.getElementById('danger-alarm-countdown');
+  let remaining = Math.round(durationSec);
+  if (countEl) countEl.textContent = `${remaining}s`;
+
+  clearInterval(alarmCountdownInterval);
+  alarmCountdownInterval = setInterval(() => {
+    remaining--;
+    if (remaining <= 0) {
+      clearInterval(alarmCountdownInterval);
+    } else if (countEl) {
+      countEl.textContent = `${remaining}s`;
+    }
+  }, 1000);
+}
+
+function hideDangerBanner() {
+  clearInterval(alarmCountdownInterval);
+  const banner = document.getElementById('danger-alarm-banner');
+  if (banner) banner.style.display = 'none';
+}
+
+function testDangerAlarm() {
+  isAlarmPlaying = false;
+  lastAlarmTime = 0;
+  playDangerAlarm(5.0, "SIMULATED PHYSIOLOGICAL DANGER EVENT");
+}
+
+const $ = id => document.getElementById(id);
+
+function setMetricStatus(id, text) {
+  const el = $(id);
+  if (el) el.textContent = text;
+}
+
+/* --- Interactive 3D Tilt & Mouse Spotlight on Glass Boxes --- */
+function initGlassInteractivity() {
+  document.querySelectorAll('.glass-box').forEach(box => {
+    box.addEventListener('mousemove', e => {
+      const rect = box.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      box.style.setProperty('--mouse-x', `${x}px`);
+      box.style.setProperty('--mouse-y', `${y}px`);
+
+      // Gentle 3D perspective tilt
+      const xTilt = ((x / rect.width) - 0.5) * 5;
+      const yTilt = ((y / rect.height) - 0.5) * -5;
+      box.style.transform = `perspective(850px) rotateX(${yTilt}deg) rotateY(${xTilt}deg) translateZ(2px)`;
+    });
+
+    box.addEventListener('mouseleave', () => {
+      box.style.transform = 'perspective(850px) rotateX(0deg) rotateY(0deg) translateZ(0px)';
+    });
+  });
+}
+
+/* --- Real-Time Mini Sparkline Drawing --- */
+function drawSparkline(canvasId, data, color, minVal, maxVal) {
+  const c = $(canvasId);
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const w = c.clientWidth || 220;
+  const h = c.clientHeight || 24;
+
+  if (c.width !== Math.round(w * dpr) || c.height !== Math.round(h * dpr)) {
+    c.width = Math.round(w * dpr);
+    c.height = Math.round(h * dpr);
+  }
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, w, h);
+
+  if (data.length < 2) return;
+
+  const range = (maxVal - minVal) || 1;
+  const step = w / (data.length - 1);
+
+  ctx.beginPath();
+  data.forEach((val, i) => {
+    const clamped = Math.max(minVal, Math.min(maxVal, val));
+    const y = h - ((clamped - minVal) / range) * (h - 6) - 3;
+    const x = i * step;
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  });
+
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 1.6;
+  ctx.stroke();
+
+  // Subtle gradient fill under curve
+  ctx.lineTo(w, h);
+  ctx.lineTo(0, h);
+  ctx.closePath();
+  const grad = ctx.createLinearGradient(0, 0, 0, h);
+  grad.addColorStop(0, color.replace(')', ', 0.22)').replace('rgb', 'rgba'));
+  grad.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = grad;
+  ctx.fill();
+}
+
+/* --- Metric Unit Toggles --- */
+function toggleHrUnit() {
+  hrMode = hrMode === 'bpm' ? 'rr' : 'bpm';
+  $('tag-hr').textContent = hrMode === 'bpm' ? '⇄ R-R ms' : '⇄ BPM';
+  updateDashboard();
+}
+
+function toggleSpo2Unit() {
+  spo2Mode = spo2Mode === 'spo2' ? 'pao2' : 'spo2';
+  $('tag-spo2').textContent = spo2Mode === 'spo2' ? '⇄ PaO₂' : '⇄ % SpO₂';
+  updateDashboard();
+}
+
+function toggleTempUnit() {
+  tempMode = tempMode === 'c' ? 'f' : 'c';
+  $('tag-temp').textContent = tempMode === 'c' ? '⇄ °F' : '⇄ °C';
+  updateDashboard();
+}
+
+/* --- Telemetry Step & Simulation --- */
+function stepTelemetry() {
+  if (isEspSourceActive) {
+    // Live ESP32 Hardware is active: do not overwrite real telemetry with simulated signals
+    return;
+  }
+  tick++;
+
+  if (!isManualControl) {
+    if (forcedAnomaly === 'tachycardia') {
+      hr = 124 + Math.sin(tick * 0.4) * 4;
+      spo2 = 96.5 + (Math.random() - 0.5) * 0.4;
+      temp = 36.8 + (Math.random() - 0.5) * 0.1;
+    } else if (forcedAnomaly === 'bradycardia') {
+      hr = 46 + Math.sin(tick * 0.3) * 2;
+      spo2 = 97.4 + (Math.random() - 0.5) * 0.4;
+      temp = 36.4 + (Math.random() - 0.5) * 0.1;
+    } else if (forcedAnomaly === 'hypoxia') {
+      hr = 88 + Math.sin(tick * 0.2) * 2;
+      spo2 = 88.5 + Math.sin(tick * 0.2) * 1.2;
+      temp = 36.5 + (Math.random() - 0.5) * 0.1;
+    } else if (forcedAnomaly === 'fever') {
+      hr = 104 + Math.sin(tick * 0.3) * 3;
+      spo2 = 97.0 + (Math.random() - 0.5) * 0.5;
+      temp = 39.2 + Math.sin(tick * 0.3) * 0.3;
+    } else if (forcedAnomaly === 'critical') {
+      hr = 138 + Math.sin(tick * 0.4) * 4;
+      spo2 = 85.0 + Math.sin(tick * 0.2) * 1.5;
+      temp = 39.5 + Math.sin(tick * 0.3) * 0.2;
+    } else {
+      hr = 72 + Math.sin(tick * 0.2) * 5 + (Math.random() - 0.5) * 1.5;
+      spo2 = 98.2 + (Math.random() - 0.5) * 0.6;
+      temp = 36.6 + (Math.random() - 0.5) * 0.15;
+    }
+  }
+
+  // Update slider positions to reflect current values
+  if (!isManualControl) {
+    if ($('slider-hr')) $('slider-hr').value = Math.round(hr);
+    if ($('slider-spo2')) $('slider-spo2').value = Number(spo2.toFixed(1));
+    if ($('slider-temp')) $('slider-temp').value = Number(temp.toFixed(1));
+    if ($('slider-hr-val')) $('slider-hr-val').textContent = `${Math.round(hr)} BPM`;
+    if ($('slider-spo2-val')) $('slider-spo2-val').textContent = `${spo2.toFixed(1)} %`;
+    if ($('slider-temp-val')) $('slider-temp-val').textContent = `${temp.toFixed(1)} °C`;
+  }
+
+  // Push into sparkline history
+  hrHistory.push(hr);
+  if (hrHistory.length > 22) hrHistory.shift();
+
+  spo2History.push(spo2);
+  if (spo2History.length > 22) spo2History.shift();
+
+  tempHistory.push(temp);
+  if (tempHistory.length > 22) tempHistory.shift();
+
+  updateDashboard();
+}
+
+/* --- Synchronize Dashboard UI & Storage --- */
+function updateDashboard() {
+  // Clinical Classification for Diagnostic Pages
+  if (isManualControl) {
+    const isHrAbnormal = hr > 100 || hr < 55;
+    const isSpo2Abnormal = spo2 < 95;
+    const isTempAbnormal = temp > 37.8 || temp < 35.5;
+    if (isHrAbnormal || isSpo2Abnormal || isTempAbnormal) {
+      let parts = [];
+      if (hr > 100) parts.push(`Tachycardia (${Math.round(hr)} BPM)`);
+      else if (hr < 55) parts.push(`Bradycardia (${Math.round(hr)} BPM)`);
+      if (spo2 < 95) parts.push(`Hypoxia (${spo2.toFixed(1)}% SpO₂)`);
+      if (temp > 37.8) parts.push(`Pyrexia (${temp.toFixed(1)}°C)`);
+      else if (temp < 35.5) parts.push(`Hypothermia (${temp.toFixed(1)}°C)`);
+      condition = parts.join(' + ') + ' [Manual Test]';
+    } else {
+      condition = 'Normal';
+    }
+  } else {
+    if (hr > 105 && spo2 < 92) {
+      condition = 'Critical Strain';
+    } else if (hr > 100) {
+      condition = 'Tachycardia';
+    } else if (hr < 55) {
+      condition = 'Bradycardia';
+    } else if (spo2 < 95) {
+      condition = 'Hypoxia';
+    } else if (temp > 37.8) {
+      condition = 'Fever';
+    } else if (temp < 35.5) {
+      condition = 'Hypothermia';
+    } else {
+      condition = 'Normal';
+    }
+  }
+
+  // Display Units
+  if (hrMode === 'bpm') {
+    $('val-hr').textContent = hr.toFixed(1);
+    $('unit-hr').textContent = 'BPM';
+  } else {
+    $('val-hr').textContent = Math.round(60000 / Math.max(30, hr));
+    $('unit-hr').textContent = 'ms (R-R)';
+  }
+
+  if (spo2Mode === 'spo2') {
+    $('val-spo2').textContent = spo2.toFixed(1);
+    $('unit-spo2').textContent = '% SpO₂';
+  } else {
+    const estPao2 = Math.max(40, Math.round(spo2 * 1.05 - 8.5));
+    $('val-spo2').textContent = estPao2;
+    $('unit-spo2').textContent = 'mmHg (PaO₂)';
+  }
+
+  const tempF = (temp * 9 / 5 + 32).toFixed(1);
+  if (tempMode === 'c') {
+    $('val-temp').textContent = temp.toFixed(1);
+    $('unit-temp').textContent = '°C';
+    $('val-temp-f').textContent = tempF;
+  } else {
+    $('val-temp').textContent = tempF;
+    $('unit-temp').textContent = '°F';
+    $('val-temp-f').textContent = temp.toFixed(1);
+  }
+
+  // Visual Meters & Progress Bars
+  const spo2FillPct = Math.max(0, Math.min(100, ((spo2 - 70) / 30) * 100));
+  if ($('spo2-bar')) $('spo2-bar').style.width = `${spo2FillPct}%`;
+
+  const tempFillPct = Math.max(0, Math.min(100, ((temp - 34) / 7.5) * 100));
+  if ($('temp-bar')) $('temp-bar').style.width = `${tempFillPct}%`;
+
+  // Dynamic Cardiac Pulse Beacon Frequency
+  const hrBeacon = $('hr-pulse-dot');
+  if (hrBeacon) {
+    const pulsePeriod = Math.max(0.3, Math.min(2.0, 60 / hr));
+    hrBeacon.style.animationDuration = `${pulsePeriod.toFixed(2)}s`;
+  }
+
+  // Alert Thresholds
+  const hrAlert = hr > 100 || hr < 55;
+  const spo2Alert = spo2 < 95;
+  const tempAlert = temp > 37.8 || temp < 35.5;
+  const isHighTrigger = hrAlert || spo2Alert || tempAlert;
+
+  // 5 seconds of danger alarm sound whenever any critical trigger occurs
+  if ((hr > 105 || hr < 50 || spo2 < 92 || temp > 38.2) && (!wasHighTrigger || (Date.now() - lastAlarmTime > 12000))) {
+    let reason = "CRITICAL PHYSIOLOGICAL TRIGGER";
+    if (hr > 105 && spo2 < 92) reason = `CRITICAL DUAL STRAIN (HR ${Math.round(hr)} BPM & SpO₂ ${spo2.toFixed(1)}%)`;
+    else if (hr > 105) reason = `TACHYCARDIA — HIGH PULSE (${Math.round(hr)} BPM)`;
+    else if (hr < 50) reason = `BRADYCARDIA — LOW PULSE (${Math.round(hr)} BPM)`;
+    else if (spo2 < 92) reason = `HYPOXEMIA — LOW OXYGEN (${spo2.toFixed(1)}% SpO₂)`;
+    else if (temp > 38.2) reason = `HIGH FEBRILE CRISIS (${temp.toFixed(1)} °C)`;
+    playDangerAlarm(5.0, reason);
+  }
+  wasHighTrigger = isHighTrigger;
+
+  $('card-hr').classList.toggle('alert', hrAlert);
+  $('card-spo2').classList.toggle('alert', spo2Alert);
+  $('card-temp').classList.toggle('alert', tempAlert);
+
+  setMetricStatus('hr-status-badge', hrAlert ? (hr > 100 ? 'TACHYCARDIA' : 'BRADYCARDIA') : (isManualControl ? 'TUNED' : 'SIMULATED'));
+  setMetricStatus('spo2-status-badge', spo2Alert ? 'HYPOXIA' : (isManualControl ? 'TUNED' : 'SIMULATED'));
+  setMetricStatus('temp-status-badge', tempAlert ? (temp > 37.8 ? 'FEBRILE' : 'HYPOTHERMIC') : (isManualControl ? 'TUNED' : 'SIMULATED'));
+
+  $('hr-note').textContent = hrAlert ? (hr > 100 ? 'TACHYCARDIA ELEVATED' : 'BRADYCARDIA DEPRESSED') : 'RESTING: 60-100 BPM';
+  $('spo2-note').textContent = spo2Alert ? 'DESATURATION / HYPOXIA' : 'OPTIMAL: 95-100%';
+  $('temp-note').textContent = tempAlert ? (temp > 37.8 ? 'HIGH PYREXIA ALERT' : 'HYPOTHERMIC ZONE') : 'NORMOTHERMIC ZONE';
+
+  // Render Sparklines
+  drawSparkline('spark-hr', hrHistory, hrAlert ? '#f87171' : '#c084fc', 40, 160);
+  drawSparkline('spark-spo2', spo2History, spo2Alert ? '#f87171' : '#38bdf8', 75, 100);
+  drawSparkline('spark-temp', tempHistory, tempAlert ? '#f87171' : '#34d399', 34, 41.5);
+
+  // Packet Payload
+  packetCount++;
+  if ($('pkt-badge')) $('pkt-badge').textContent = `PKT #${packetCount}`;
+
+  const packet = {
+    node: 'WBAN_TELEMETRY_NODE_01',
+    source: isManualControl ? 'MANUAL_TUNER' : 'EMULATED_STREAM',
+    packet_id: packetCount,
+    timestamp: new Date().toISOString(),
+    vitals: {
+      heart_rate_bpm: Number(hr.toFixed(1)),
+      oxygen_saturation_pct: Number(spo2.toFixed(1)),
+      core_temperature_c: Number(temp.toFixed(1)),
+      core_temperature_f: Number(tempF),
+      rr_interval_ms: Math.round(60000 / Math.max(30, hr)),
+      estimated_pao2_mmhg: Math.max(40, Math.round(spo2 * 1.05 - 8.5))
+    },
+    clinical_state: condition,
+    alert_flags: {
+      tachycardia: hr > 100,
+      bradycardia: hr < 55,
+      hypoxia: spo2 < 95,
+      fever: temp > 37.8
+    }
+  };
+
+  if (!consolePaused) {
+    $('console-stream').textContent =
+      `> [WBAN REAL-TIME TELEMETRY PACKET #${packetCount}]
+` +
+      JSON.stringify(packet, null, 2);
+  }
+
+  // Cross-page storage sync for diagnostic analysis & clinical queries
+  try {
+    localStorage.setItem('wban_telemetry', JSON.stringify({
+      hr: Number(hr.toFixed(1)),
+      spo2: Number(spo2.toFixed(1)),
+      temp: Number(temp.toFixed(1)),
+      condition,
+      tick,
+      source: isManualControl ? 'MANUAL_TUNER' : 'SIMULATED',
+      timestamp: packet.timestamp
+    }));
+
+    // Continuously sync all telemetry readings to wban_ledger and wban_abnormal_ledger
+    let abnormalLedger = [];
+    const rawStored = localStorage.getItem('wban_abnormal_ledger') || localStorage.getItem('wban_ledger');
+    if (rawStored) {
+      try {
+        const parsed = JSON.parse(rawStored);
+        if (Array.isArray(parsed)) abnormalLedger = parsed;
+      } catch(e) {}
+    }
+    const timeStr = new Date().toLocaleTimeString();
+    const demo = JSON.parse(localStorage.getItem('wban_demo') || '{"bmi": 22.86}');
+    const isDuplicate = abnormalLedger.length > 0 &&
+                        abnormalLedger[0].time === timeStr &&
+                        Math.abs(parseFloat(abnormalLedger[0].hr) - Number(hr.toFixed(1))) < 0.05;
+    if (!isDuplicate) {
+      abnormalLedger.unshift({
+        time: timeStr,
+        _ts: Date.now(),
+        hr: Number(hr.toFixed(1)),
+        spo2: Number(spo2.toFixed(1)),
+        temp: Number(temp.toFixed(1)),
+        bmi: demo.bmi || '22.86',
+        status: condition || (isHighTrigger ? (hrAlert ? 'Cardiac Alert' : (spo2Alert ? 'Hypoxia Alert' : 'Pyrexia Alert')) : 'Normal Homeostasis')
+      });
+      if (abnormalLedger.length > 50) abnormalLedger.pop();
+      localStorage.setItem('wban_abnormal_ledger', JSON.stringify(abnormalLedger));
+      localStorage.setItem('wban_ledger', JSON.stringify(abnormalLedger));
+    }
+  } catch (error) {
+    console.warn('Browser storage is unavailable.', error);
+  }
+}
+
+/* --- Hardware Test Bench Interactivity --- */
+function switchBenchTab(tab) {
+  $('tab-presets').classList.toggle('active', tab === 'presets');
+  $('tab-manual').classList.toggle('active', tab === 'manual');
+  $('bench-presets-panel').style.display = tab === 'presets' ? 'flex' : 'none';
+  $('bench-sliders-panel').style.display = tab === 'manual' ? 'grid' : 'none';
+  if (tab === 'manual') {
+    isManualControl = true;
+    onSliderChange();
+  }
+}
+
+function injectAnomaly(type) {
+  isManualControl = false;
+  forcedAnomaly = type === 'normal' ? null : type;
+
+  // Immediate log of preset anomaly to ledger
+  setTimeout(() => {
+    try {
+      const abnormalLedger = JSON.parse(localStorage.getItem('wban_abnormal_ledger') || '[]');
+      const timeStr = new Date().toLocaleTimeString();
+      const demo = JSON.parse(localStorage.getItem('wban_demo') || '{"bmi": 22.86}');
+      abnormalLedger.unshift({
+        time: timeStr,
+        _ts: Date.now(),
+        hr: Number(hr.toFixed(1)),
+        spo2: Number(spo2.toFixed(1)),
+        temp: Number(temp.toFixed(1)),
+        bmi: demo.bmi || '22.86',
+        status: condition || (type === 'normal' ? 'Normal Baseline' : 'Preset Alert: ' + type.toUpperCase()),
+        source: 'PRESET_' + type.toUpperCase()
+      });
+      if (abnormalLedger.length > 35) abnormalLedger.pop();
+      localStorage.setItem('wban_abnormal_ledger', JSON.stringify(abnormalLedger));
+      localStorage.setItem('wban_ledger', JSON.stringify(abnormalLedger));
+    } catch(e) {}
+  }, 100);
+
+  // Immediate 5s danger sound on any high trigger anomaly injection
+  if (type !== 'normal') {
+    isAlarmPlaying = false;
+    lastAlarmTime = 0;
+    const anomalyLabels = {
+      tachycardia: "TACHYCARDIA: HIGH HEART RATE (> 120 BPM)",
+      bradycardia: "BRADYCARDIA: LOW HEART RATE (< 50 BPM)",
+      hypoxia: "HYPOXIA: CRITICAL LOW OXYGEN SATURATION",
+      fever: "HIGH PYREXIA: ELEVATED BODY TEMPERATURE",
+      critical: "MULTI-ORGAN CRITICAL HEALTH FAILURE"
+    };
+    playDangerAlarm(5.0, anomalyLabels[type] || "CRITICAL PHYSIOLOGICAL TRIGGER");
+  }
+
+  // Update preset button active states
+  const btnMap = {
+    normal: 'btn-normal',
+    tachycardia: 'btn-tachy',
+    bradycardia: 'btn-brady',
+    hypoxia: 'btn-hypo',
+    fever: 'btn-fever',
+    critical: 'btn-multi'
+  };
+
+  Object.values(btnMap).forEach(id => {
+    const el = $(id);
+    if (el) el.classList.remove('active');
+  });
+
+  const activeBtn = $(btnMap[type] || 'btn-normal');
+  if (activeBtn) activeBtn.classList.add('active');
+
+  stepTelemetry();
+}
+
+let lastManualTestTimestamp = 0;
+
+function logManualSensorTest(isCommit = false) {
+  const isHrAbnormal = hr > 100 || hr < 55;
+  const isSpo2Abnormal = spo2 < 95;
+  const isTempAbnormal = temp > 37.8 || temp < 35.5;
+  const isAbnormal = isHrAbnormal || isSpo2Abnormal || isTempAbnormal;
+
+  const fb = $('manual-test-feedback');
+  const fbText = $('manual-feedback-text');
+  const fbIcon = $('manual-feedback-icon');
+
+  let conditionText = '';
+  if (isAbnormal) {
+    let triggers = [];
+    if (hr > 100) triggers.push(`Tachycardia (${Math.round(hr)} BPM)`);
+    else if (hr < 55) triggers.push(`Bradycardia (${Math.round(hr)} BPM)`);
+
+    if (spo2 < 95) triggers.push(`Hypoxia (${spo2.toFixed(1)}% SpO₂)`);
+
+    if (temp > 37.8) triggers.push(`Pyrexia (${temp.toFixed(1)}°C)`);
+    else if (temp < 35.5) triggers.push(`Hypothermia (${temp.toFixed(1)}°C)`);
+
+    conditionText = triggers.join(' + ') + ' [Manual Test]';
+  } else {
+    conditionText = `Normal Homeostasis (${Math.round(hr)} BPM | ${spo2.toFixed(1)}% | ${temp.toFixed(1)}°C) [Manual Test]`;
+  }
+  condition = conditionText;
+
+  // Immediate visual feedback in sliders panel
+  if (fb) fb.className = isAbnormal ? 'manual-test-feedback abnormal' : 'manual-test-feedback normal';
+  if (fbIcon) fbIcon.textContent = isAbnormal ? '⚠️' : '✓';
+  if (fbText) {
+    fbText.innerHTML = isAbnormal
+      ? `<strong>ABNORMAL VALUE LOGGED:</strong> ${conditionText} — <span style="color:#ffffff; text-decoration: underline;">Appearing in ABNORMAL DATA table</span>`
+      : `<strong>TEST VALUE LOGGED:</strong> ${conditionText} — <span style="color:#ffffff; text-decoration: underline;">Appearing in ABNORMAL DATA table</span>`;
+  }
+
+  tick++;
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString();
+  const demo = JSON.parse(localStorage.getItem('wban_demo') || '{"bmi": 22.86}');
+
+  // Update telemetry in localStorage
+  try {
+    localStorage.setItem('wban_telemetry', JSON.stringify({
+      hr: Number(hr.toFixed(1)),
+      spo2: Number(spo2.toFixed(1)),
+      temp: Number(temp.toFixed(1)),
+      condition: conditionText,
+      tick: tick,
+      source: 'MANUAL_TUNER',
+      timestamp: now.toISOString()
+    }));
+
+    // Update abnormal ledger in localStorage
+    let abnormalLedger = [];
+    const raw = localStorage.getItem('wban_abnormal_ledger') || localStorage.getItem('wban_ledger');
+    if (raw) {
+      try {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) abnormalLedger = parsed;
+      } catch(e) {}
+    }
+
+    const entry = {
+      time: timeStr,
+      _ts: Date.now(),
+      hr: Number(hr.toFixed(1)),
+      spo2: Number(spo2.toFixed(1)),
+      temp: Number(temp.toFixed(1)),
+      bmi: demo.bmi || '22.86',
+      status: conditionText,
+      source: 'MANUAL_TUNER'
+    };
+
+    const nowMs = Date.now();
+    // If the top entry was logged during this manual test session (within last 4 seconds), update it in-place
+    // so the user's latest tuned slider value is captured accurately without flooding duplicate entries while dragging
+    const isRecentManual = abnormalLedger.length > 0 &&
+                          (String(abnormalLedger[0].status || '').includes('[Manual Test]') || abnormalLedger[0].source === 'MANUAL_TUNER') &&
+                          (nowMs - lastManualTestTimestamp < 4000);
+
+    if (isRecentManual) {
+      abnormalLedger[0] = entry;
+    } else {
+      abnormalLedger.unshift(entry);
+      if (abnormalLedger.length > 35) abnormalLedger.pop();
+    }
+
+    lastManualTestTimestamp = nowMs;
+    localStorage.setItem('wban_abnormal_ledger', JSON.stringify(abnormalLedger));
+    localStorage.setItem('wban_ledger', JSON.stringify(abnormalLedger));
+  } catch (err) {
+    console.warn("Storage write error during manual test:", err);
+  }
+}
+
+function onSliderChange() {
+  isManualControl = true;
+  forcedAnomaly = null;
+
+  document.querySelectorAll('.bench-presets-row .bench-btn').forEach(b => b.classList.remove('active'));
+
+  hr = Number($('slider-hr').value);
+  spo2 = Number($('slider-spo2').value);
+  temp = Number($('slider-temp').value);
+
+  $('slider-hr-val').textContent = `${Math.round(hr)} BPM`;
+  $('slider-spo2-val').textContent = `${spo2.toFixed(1)} %`;
+  $('slider-temp-val').textContent = `${temp.toFixed(1)} °C`;
+
+  // Update sparklines and UI immediately
+  hrHistory.push(hr);
+  if (hrHistory.length > 22) hrHistory.shift();
+
+  spo2History.push(spo2);
+  if (spo2History.length > 22) spo2History.shift();
+
+  tempHistory.push(temp);
+  if (tempHistory.length > 22) tempHistory.shift();
+
+  updateDashboard();
+
+  // If user adjusts slider into a high trigger state, trigger 5-second danger alarm sound
+  if (hr > 105 || hr < 50 || spo2 < 92 || temp > 38.2) {
+    let reason = "MANUALLY TUNED HEALTH DANGER";
+    if (hr > 105) reason = `TACHYCARDIA: ${Math.round(hr)} BPM`;
+    else if (hr < 50) reason = `BRADYCARDIA: ${Math.round(hr)} BPM`;
+    else if (spo2 < 92) reason = `HYPOXIA: ${spo2.toFixed(1)}% SpO₂`;
+    else if (temp > 38.2) reason = `FEVER: ${temp.toFixed(1)} °C`;
+    playDangerAlarm(5.0, reason);
+  }
+
+  // Live log manual values to storage & update feedback
+  logManualSensorTest(false);
+}
+
+function onSliderCommit() {
+  onSliderChange();
+  logManualSensorTest(true);
+}
+
+function resetToAutoSimulation() {
+  isManualControl = false;
+  forcedAnomaly = null;
+  injectAnomaly('normal');
+  const fb = $('manual-test-feedback');
+  const fbText = $('manual-feedback-text');
+  const fbIcon = $('manual-feedback-icon');
+  if (fb) fb.className = 'manual-test-feedback normal';
+  if (fbIcon) fbIcon.textContent = '✓';
+  if (fbText) fbText.textContent = 'Auto simulation resumed. Generating baseline physiological vitals.';
+}
+/* --- Telemetry Console Stream Controls --- */
+function copyConsoleJSON() {
+  const content = $('console-stream').textContent;
+  if (!content) return;
+
+  const btnText = $('copy-btn-text');
+  navigator.clipboard.writeText(content).then(() => {
+    if (btnText) {
+      btnText.textContent = '✓ Copied!';
+      setTimeout(() => {
+        btnText.textContent = '📋 Copy JSON';
+      }, 2000);
+    }
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = content;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    if (btnText) {
+      btnText.textContent = '✓ Copied!';
+      setTimeout(() => {
+        btnText.textContent = '📋 Copy JSON';
+      }, 2000);
+    }
+  });
+}
+
+function toggleConsoleStream() {
+  consolePaused = !consolePaused;
+  const badge = $('stream-live-badge');
+  const btnText = $('pause-btn-text');
+
+  if (consolePaused) {
+    if (badge) {
+      badge.classList.add('paused');
+      badge.innerHTML = '<span class="badge-dot"></span> PAUSED';
+    }
+    if (btnText) btnText.textContent = '▶ Resume Stream';
+  } else {
+    if (badge) {
+      badge.classList.remove('paused');
+      badge.innerHTML = '<span class="badge-dot"></span> LIVE';
+    }
+    if (btnText) btnText.textContent = '⏸ Pause Stream';
+    updateDashboard();
+  }
+}
+
+function clearConsoleStream() {
+  $('console-stream').textContent = '> Console cleared. Awaiting next incoming packet...';
+}
+
+/* --- Hardware Feed Source Switch & Direct ESP32 Connection Engine --- */
+let isEspSourceActive = false;
+let serialPort = null;
+let serialReader = null;
+let serialKeepReading = false;
+let espBackendPollTimer = null;
+
+function handleEspPacket(data) {
+  if (!data) return;
+
+  if (data.hr !== undefined) hr = parseFloat(data.hr);
+  if (data.spo2 !== undefined) spo2 = parseFloat(data.spo2);
+  if (data.temp !== undefined) temp = parseFloat(data.temp);
+  if (data.condition) condition = data.condition;
+  else {
+    const isHrAbn = hr > 100 || hr < 55;
+    const isSpo2Abn = spo2 < 95;
+    const isTempAbn = temp > 37.8 || temp < 35.5;
+    if (isHrAbn || isSpo2Abn || isTempAbn) {
+      condition = (hr > 100 ? 'Tachycardia' : (hr < 55 ? 'Bradycardia' : '')) +
+                  (spo2 < 95 ? ' Hypoxia' : '') +
+                  (temp > 37.8 ? ' Pyrexia' : (temp < 35.5 ? ' Hypothermia' : '')) + ' [ESP32 Live]';
+    } else {
+      condition = 'Normal Homeostasis [ESP32 Live]';
+    }
+  }
+
+  hrHistory.push(hr);
+  if (hrHistory.length > 50) hrHistory.shift();
+
+  spo2History.push(spo2);
+  if (spo2History.length > 50) spo2History.shift();
+
+  tempHistory.push(temp);
+  if (tempHistory.length > 50) tempHistory.shift();
+
+  updateDashboard();
+}
+
+async function startSerialConnection(specificPort = null) {
+  if (!('serial' in navigator)) {
+    $('console-stream').textContent =
+      '> [HARDWARE NOTICE] Web Serial API not supported in this browser.\n' +
+      '> Use Google Chrome, Microsoft Edge, or Opera to connect directly to ESP32 via USB.\n' +
+      '> Listening for local Wi-Fi / Backend bridge (http://localhost:5000)...';
+    startBackendPolling();
+    return;
+  }
+
+  try {
+    let port = specificPort;
+    if (!port) {
+      const authorizedPorts = await navigator.serial.getPorts();
+      if (authorizedPorts.length > 0) {
+        port = authorizedPorts[0]; // Auto-connect directly to previously authorized ESP32 port
+      } else {
+        $('console-stream').textContent = '> Opening USB Serial Port selection dialog. Please pick your ESP32 device...';
+        port = await navigator.serial.requestPort();
+      }
+    }
+
+    if (!port) return;
+
+    // Clean previous session if any
+    if (serialPort && serialPort.readable) {
+      serialKeepReading = false;
+      try { await serialReader.cancel(); } catch(e) {}
+    }
+
+    await port.open({ baudRate: 115200 });
+    serialPort = port;
+    serialKeepReading = true;
+
+    $('source-label').textContent = 'Source: ESP32 [ONLINE]';
+    $('source-status').textContent = 'ESP32 CONNECTED';
+    $('system-status-text').textContent = 'ESP32 USB SERIAL CONNECTED';
+    $('system-dot').classList.remove('offline');
+
+    $('console-stream').textContent =
+      '> [ESP32 HARDWARE CONNECTED DIRECTLY]\n' +
+      '> Direct USB Serial Bridge initialized at 115200 Baud.\n' +
+      '> Receiving live telemetry packet stream from physical hardware...';
+
+    readSerialLoop(port);
+
+  } catch (err) {
+    console.warn("Serial connection attempt:", err);
+    $('source-label').textContent = 'Source: ESP32 (Waiting...)';
+    $('source-status').textContent = 'WAITING';
+    $('system-status-text').textContent = 'SWITCH ON ESP32 / PLUG IN USB';
+    $('system-dot').classList.add('offline');
+    $('console-stream').textContent =
+      `> [ESP32 STATUS] Waiting for hardware connection.\n` +
+      `> Switch on your ESP32 or plug in USB cable.\n` +
+      `> Detail: ${err.message || err}`;
+
+    startBackendPolling();
+  }
+}
+
+async function readSerialLoop(port) {
+  const textDecoder = new TextDecoderStream();
+  const readableStreamClosed = port.readable.pipeTo(textDecoder.writable);
+  const reader = textDecoder.readable.getReader();
+  serialReader = reader;
+
+  let buffer = '';
+  try {
+    while (serialKeepReading) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      if (value) {
+        buffer += value;
+        const lines = buffer.split('\n');
+        buffer = lines.pop(); // Retain incomplete fragment
+
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (!trimmed) continue;
+
+          if (!consolePaused) {
+            $('console-stream').textContent = `> [ESP32 RX] ${trimmed}`;
+          }
+
+          try {
+            if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
+              const packet = JSON.parse(trimmed);
+              handleEspPacket(packet);
+            } else if (trimmed.includes(',')) {
+              const parts = trimmed.split(',');
+              if (parts.length >= 3) {
+                handleEspPacket({
+                  hr: parseFloat(parts[0]),
+                  spo2: parseFloat(parts[1]),
+                  temp: parseFloat(parts[2]),
+                  condition: 'ESP32 Raw Stream'
+                });
+              }
+            }
+          } catch(e) {
+            // Ignore corrupted partial line
+          }
+        }
+      }
+    }
+  } catch (err) {
+    console.warn("Serial read loop closed:", err);
+    handleEspDisconnect();
+  } finally {
+    try { reader.releaseLock(); } catch(e) {}
+  }
+}
+
+function handleEspDisconnect() {
+  if (!isEspSourceActive) return;
+  $('source-label').textContent = 'Source: ESP32 (Disconnected)';
+  $('source-status').textContent = 'DISCONNECTED';
+  $('system-status-text').textContent = 'ESP32 DISCONNECTED — SWITCH ON DEVICE';
+  $('system-dot').classList.add('offline');
+  $('console-stream').textContent =
+    '> [ESP32 DISCONNECTED] Device switched off or unplugged.\n' +
+    '> Listening for device reconnection...';
+}
+
+// Auto-detect when ESP32 device is switched on or plugged in
+if ('serial' in navigator) {
+  navigator.serial.addEventListener('connect', (e) => {
+    console.log("ESP32 Device detected on USB:", e);
+    if (isEspSourceActive) {
+      startSerialConnection(e.target);
+    }
+  });
+
+  navigator.serial.addEventListener('disconnect', (e) => {
+    console.log("ESP32 Device disconnected from USB:", e);
+    handleEspDisconnect();
+  });
+}
+
+function startBackendPolling() {
+  if (espBackendPollTimer) return;
+  espBackendPollTimer = setInterval(async () => {
+    if (!isEspSourceActive) return;
+    try {
+      const res = await fetch('http://localhost:5000/api/telemetry/latest', { cache: 'no-store' });
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.hr) {
+          $('source-label').textContent = 'Source: ESP32 [WI-FI LIVE]';
+          $('source-status').textContent = 'WI-FI CONNECTED';
+          $('system-status-text').textContent = 'ESP32 WI-FI CONNECTED';
+          $('system-dot').classList.remove('offline');
+          handleEspPacket(data);
+        }
+      }
+    } catch(e) {
+      // Backend not running; quiet fail
+    }
+  }, 1000);
+}
+
+function stopBackendPolling() {
+  if (espBackendPollTimer) {
+    clearInterval(espBackendPollTimer);
+    espBackendPollTimer = null;
+  }
+}
+
+const sourceToggleEl = $('feed-source-toggle');
+if (sourceToggleEl) {
+  sourceToggleEl.addEventListener('change', async event => {
+    playBellSound();
+    isEspSourceActive = event.target.checked;
+
+    if (isEspSourceActive) {
+      $('source-label').textContent = 'Source: ESP32 (Connecting...)';
+      $('source-status').textContent = 'CONNECTING...';
+      $('system-status-text').textContent = 'CONNECTING TO ESP32...';
+      $('system-dot').classList.add('offline');
+
+      // Attempt Direct Connection
+      startSerialConnection();
+      return;
+    }
+
+    // Switched back to Emulation
+    serialKeepReading = false;
+    if (serialReader) {
+      try { await serialReader.cancel(); } catch(e) {}
+    }
+    if (serialPort) {
+      try { await serialPort.close(); } catch(e) {}
+      serialPort = null;
+    }
+    stopBackendPolling();
+
+    $('source-label').textContent = 'Source: Emulated';
+    $('source-status').textContent = 'SIMULATED';
+    $('system-status-text').textContent = 'SIMULATION ACTIVE';
+    $('system-dot').classList.remove('offline');
+
+    $('console-stream').textContent = '> Emulation mode restored. Generating autonomous physiological signal.';
+    stepTelemetry();
+  });
+}
+
+/* =========================================================
+   INTERACTIVE ECG OSCILLOSCOPE CANVAS
+   ========================================================= */
+
+const ecgCanvas = $('ecg-canvas');
+const ecgCtx = ecgCanvas.getContext('2d');
+
+let ecgX = 0;
+let previousY = 90;
+let lastEcgTime = 0;
+let ecgSpeed = 1.0;
+let ecgColor = '#c084fc';
+let ecgShadowColor = 'rgba(168,85,247,0.55)';
+let ecgPaused = false;
+let ecgShowGrid = true;
+
+function resizeECG() {
+  const rect = ecgCanvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return;
+
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  ecgCanvas.width = Math.round(rect.width * dpr);
+  ecgCanvas.height = Math.round(rect.height * dpr);
+
+  ecgCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ecgX = 0;
+  previousY = rect.height / 2;
+}
+
+function setEcgSpeed(speed, btn) {
+  ecgSpeed = speed;
+  document.querySelectorAll('.ecg-pill-btn').forEach(b => {
+    if (b.textContent.includes('x')) b.classList.remove('active');
+  });
+  if (btn) btn.classList.add('active');
+}
+
+function setEcgColor(color, shadow, dot) {
+  ecgColor = color;
+  ecgShadowColor = shadow;
+  document.querySelectorAll('.ecg-color-dot').forEach(d => d.classList.remove('active'));
+  if (dot) dot.classList.add('active');
+}
+
+function toggleEcgGrid(btn) {
+  ecgShowGrid = !ecgShowGrid;
+  btn.classList.toggle('active', ecgShowGrid);
+}
+
+function toggleEcgFreeze(btn) {
+  ecgPaused = !ecgPaused;
+  btn.classList.toggle('active', ecgPaused);
+  btn.textContent = ecgPaused ? '▶ RESUME' : '⏸ FREEZE';
+  $('ecg-paused-overlay').style.display = ecgPaused ? 'block' : 'none';
+}
+
+// Interactive Crosshair Reticle on ECG Canvas
+const ecgContainer = $('ecg-container-wrap');
+const ecgReticle = $('ecg-reticle');
+const ecgBadge = $('ecg-badge');
+
+if (ecgContainer && ecgReticle && ecgBadge) {
+  ecgContainer.addEventListener('mousemove', e => {
+    const rect = ecgCanvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    if (x >= 0 && x <= rect.width && y >= 0 && y <= rect.height) {
+      ecgReticle.style.display = 'block';
+      ecgReticle.style.left = `${x}px`;
+      const timeMs = Math.round((x / rect.width) * 1200);
+      const mv = (((rect.height / 2 - y) / (rect.height / 2)) * 1.5).toFixed(2);
+      ecgBadge.textContent = `${mv >= 0 ? '+' : ''}${mv} mV | ${timeMs} ms`;
+    }
+  });
+
+  ecgContainer.addEventListener('mouseleave', () => {
+    ecgReticle.style.display = 'none';
+  });
+}
+
+function drawECG(now) {
+  if (document.hidden) {
+    lastEcgTime = 0;
+    requestAnimationFrame(drawECG);
+    return;
+  }
+
+  const rect = ecgCanvas.getBoundingClientRect();
+  const w = rect.width;
+  const h = rect.height;
+
+  if (!w || !h) {
+    requestAnimationFrame(drawECG);
+    return;
+  }
+
+  if (lastEcgTime && now - lastEcgTime < (25 / ecgSpeed)) {
+    requestAnimationFrame(drawECG);
+    return;
+  }
+  lastEcgTime = now;
+
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  if (ecgCanvas.width !== Math.round(w * dpr) ||
+      ecgCanvas.height !== Math.round(h * dpr)) {
+    resizeECG();
+  }
+
+  if (ecgPaused) {
+    requestAnimationFrame(drawECG);
+    return;
+  }
+
+  const stepX = Math.round(2 * ecgSpeed);
+
+  // Clear scanner slice
+  ecgCtx.fillStyle = 'rgba(10, 12, 18, 0.22)';
+  ecgCtx.fillRect(ecgX, 0, Math.max(16, stepX * 8), h);
+
+  // Optional calibration grid
+  if (ecgShowGrid) {
+    ecgCtx.strokeStyle = 'rgba(148, 163, 184, 0.07)';
+    ecgCtx.lineWidth = 0.5;
+
+    for (let y = 0; y < h; y += 20) {
+      ecgCtx.beginPath();
+      ecgCtx.moveTo(ecgX, y);
+      ecgCtx.lineTo(ecgX + stepX, y);
+      ecgCtx.stroke();
+    }
+  }
+
+  const centerY = h / 2;
+  // Cardiac cycle dynamically adapts to heart rate!
+  const cycleLength = Math.max(65, Math.min(180, Math.round(7200 / hr)));
+  const phase = ecgX % cycleLength;
+  let sampleY = centerY;
+
+  // Realistic P-Q-R-S-T morphology
+  if (phase > 15 && phase < 26) {
+    sampleY -= Math.sin((phase - 15) / 11 * Math.PI) * 7; // P-wave
+  } else if (phase >= 36 && phase < 39) {
+    sampleY += 8; // Q-wave
+  } else if (phase >= 39 && phase < 45) {
+    sampleY -= 48; // R-peak
+  } else if (phase >= 45 && phase < 49) {
+    sampleY += 16; // S-wave
+  } else if (phase > 62 && phase < 84) {
+    sampleY -= Math.sin((phase - 62) / 22 * Math.PI) * 12; // T-wave
+  }
+
+  ecgCtx.strokeStyle = ecgColor;
+  ecgCtx.lineWidth = 1.7;
+  ecgCtx.shadowColor = ecgShadowColor;
+  ecgCtx.shadowBlur = 6;
+
+  ecgCtx.beginPath();
+  ecgCtx.moveTo(ecgX - stepX, previousY);
+  ecgCtx.lineTo(ecgX, sampleY);
+  ecgCtx.stroke();
+
+  ecgCtx.shadowBlur = 0;
+
+  previousY = sampleY;
+  ecgX += stepX;
+
+  if (ecgX >= w) {
+    ecgX = 0;
+    ecgCtx.clearRect(0, 0, w, h);
+  }
+
+  requestAnimationFrame(drawECG);
+}
+
+// Initialize on DOM load
+window.addEventListener('resize', () => {
+  resizeECG();
+  drawSparkline('spark-hr', hrHistory, '#c084fc', 40, 160);
+  drawSparkline('spark-spo2', spo2History, '#38bdf8', 75, 100);
+  drawSparkline('spark-temp', tempHistory, '#34d399', 34, 41.5);
+});
+
+resizeECG();
+requestAnimationFrame(drawECG);
+
+initGlassInteractivity();
+stepTelemetry();
+setInterval(stepTelemetry, 2500);
+
+/* --- Mobile Sidebar Two-Dots Menu Controller --- */
+function toggleMobileSidebar() {
+  const sidebar = document.querySelector('.sidebar');
+  const backdrop = document.getElementById('sidebar-backdrop');
+  const toggleBtn = document.getElementById('mobile-sidebar-toggle');
+  if (!sidebar) return;
+  const isOpen = sidebar.classList.toggle('mobile-open');
+  if (backdrop) backdrop.classList.toggle('active', isOpen);
+  if (toggleBtn) toggleBtn.classList.toggle('active', isOpen);
+}
+
+function closeMobileSidebar() {
+  const sidebar = document.querySelector('.sidebar');
+  const backdrop = document.getElementById('sidebar-backdrop');
+  const toggleBtn = document.getElementById('mobile-sidebar-toggle');
+  if (sidebar) sidebar.classList.remove('mobile-open');
+  if (backdrop) backdrop.classList.remove('active');
+  if (toggleBtn) toggleBtn.classList.remove('active');
+}
+
+// Close mobile sidebar when clicking any navigation link
+document.querySelectorAll('.sidebar-nav a').forEach(navLink => {
+  navLink.addEventListener('click', () => {
+    closeMobileSidebar();
+  });
+});
+
+/* --- Slow Left-to-Right Page Transition Handler --- */
+document.querySelectorAll('a[href]').forEach(link => {
+  const href = link.getAttribute('href');
+  if (!href) return;
+  if (
+    href.startsWith('http://') ||
+    href.startsWith('https://') ||
+    href.startsWith('//') ||
+    href.startsWith('#') ||
+    href.startsWith('javascript:') ||
+    href.startsWith('mailto:') ||
+    link.target === '_blank'
+  ) return;
+
+  link.addEventListener('click', e => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    const currentFile = window.location.pathname.split('/').pop() || 'index.html';
+    if (href === currentFile) return;
+
+    e.preventDefault();
+    document.body.classList.add('page-transitioning-out');
+    setTimeout(() => {
+      window.location.href = href;
+    }, 260);
+  });
+});
+
+window.addEventListener('pageshow', () => {
+  document.body.classList.remove('page-transitioning-out');
+});
+</script>
+
+</body>
+</html>
